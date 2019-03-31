@@ -1,4 +1,5 @@
-# Firefox ~~Lightbeam~~ Greenbeam
+# ~~Firefox Lightbeam~~ 
+# Greenbeam
 
 _This is an experiment in adapting an existing browser extension to see if it's possible to use tools like browser extensions to surface demand from end users of services, to have the sites and services they use run on renewable power_.
 
