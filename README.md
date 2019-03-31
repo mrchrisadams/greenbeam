@@ -1,4 +1,11 @@
-# Firefox Lightbeam
+# Firefox ~~Lightbeam~~ Greenbeam
+
+_This is an experiment in adapting an existing browser extension to see if it's possible to use tools like browser extensions to surface demand from end users of services, to have the sites and services they use run on renewable power_.
+
+_See the [issues](https://github.com/mrchrisadams/greenbeam/issues) for more_, and the initial Prototype funding application in English](https://github.com/mrchrisadams/greenbeam/blob/master/docs/prototype-fund-application.md) to understand the idea in more detail
+
+
+
 This is the web extension version of the Firefox Lightbeam add-on for visualizing HTTP requests between websites in real time.
 
 The Firefox Lightbeam extension by Mozilla is a key tool for Mozilla to educate the public about privacy.
