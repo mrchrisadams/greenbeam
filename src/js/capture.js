@@ -1,7 +1,7 @@
 /*
-* Listens for HTTP request responses, sending first- and
-* third-party requests to storage.
-*/
+ * Listens for HTTP request responses, sending first- and
+ * third-party requests to storage.
+ */
 const capture = {
 
   init() {
@@ -18,8 +18,9 @@ const capture = {
       };
       this.queue.push(eventDetails);
       this.processNextEvent();
-    },
-      {urls: ['<all_urls>']});
+    }, {
+      urls: ['<all_urls>']
+    });
     // listen for tab updates
     browser.tabs.onUpdated.addListener(
       (tabId, changeInfo, tab) => {
@@ -86,8 +87,8 @@ const capture = {
     //  showing a simpler graph just for default means we won't confuse users
     //  into thinking isolation has broken
     const defaultCookieStore = 'firefox-default';
-    if ('cookieStoreId' in info
-        && info.cookieStoreId !== defaultCookieStore) {
+    if ('cookieStoreId' in info &&
+      info.cookieStoreId !== defaultCookieStore) {
       return false;
     }
     if (this.isVisibleTab(tabId)) {
@@ -115,9 +116,9 @@ const capture = {
 
     // ignore about:*, moz-extension:*
     // also ignore private browsing tabs
-    if (documentUrl.protocol !== 'about:'
-      && documentUrl.protocol !== 'moz-extension:'
-      && !privateBrowsing) {
+    if (documentUrl.protocol !== 'about:' &&
+      documentUrl.protocol !== 'moz-extension:' &&
+      !privateBrowsing) {
       return true;
     }
     return false;
@@ -160,15 +161,25 @@ const capture = {
     } else {
       firstPartyUrl = new URL(response.originUrl);
     }
+    //Eve starts here!
+    // if (targetUrl.hostname != 'api.thegreenwebfoundation.org') {
+    const testVariable = await checkGreenStatus(targetUrl.hostname).then(data => {
+      return data.green
+    });
 
-    if (firstPartyUrl.hostname
-      && targetUrl.hostname !== firstPartyUrl.hostname
-      && await this.shouldStore(response)) {
+    console.log(targetUrl.hostname);
+    console.log(testVariable);
+    //Eve mostly ends here!!
+    if (firstPartyUrl.hostname &&
+      targetUrl.hostname !== firstPartyUrl.hostname &&
+      targetUrl.hostname !== 'api.thegreenwebfoundation.org' &&
+      await this.shouldStore(response)) {
       const data = {
         target: targetUrl.hostname,
         origin: originUrl.hostname,
         requestTime: response.timeStamp,
-        firstParty: false
+        firstParty: false,
+        greenCheckTest: testVariable
       };
       await store.setThirdParty(
         firstPartyUrl.hostname,
@@ -181,16 +192,34 @@ const capture = {
   // capture first party requests
   async sendFirstParty(tabId, changeInfo, tab) {
     const documentUrl = new URL(tab.url);
-    if (documentUrl.hostname
-        && tab.status === 'complete' && await this.shouldStore(tab)) {
+    //start of Eve messing around.
+    const testVariable = await checkGreenStatus(documentUrl.hostname).then(data => {
+      return data.green
+    });
+    console.log("firstparty " + testVariable);
+    console.log(documentUrl.hostname);
+    //end of eve messing around!
+    if (documentUrl.hostname &&
+      tab.status === 'complete' && await this.shouldStore(tab)) {
       const data = {
         faviconUrl: tab.favIconUrl,
         firstParty: true,
-        requestTime: Date.now()
+        requestTime: Date.now(),
+        greenCheckTest: testVariable
       };
       await store.setFirstParty(documentUrl.hostname, data);
     }
   }
 };
+
+
+//Eve is messing around below!! This should really be in a separate file!!!
+async function checkGreenStatus(url) {
+  let response = await fetch(`http://api.thegreenwebfoundation.org/greencheck/${url}`);
+  let data = await response.json()
+  return data
+}
+
+//End of eve messing around.
 
 capture.init();

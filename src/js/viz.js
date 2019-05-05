@@ -8,14 +8,22 @@ const viz = {
   collisionRadius: 10,
   chargeStrength: -100,
   tickCount: 100,
+  //Eve is messing around below
   canvasColor: 'white',
+  canvasTestColor: 'white',
   alphaStart: 1,
   alphaTargetStart: 0.1,
   alphaTargetStop: 0,
 
   init(nodes, links) {
-    const { width, height } = this.getDimensions();
-    const { canvas, context } = this.createCanvas();
+    const {
+      width,
+      height
+    } = this.getDimensions();
+    const {
+      canvas,
+      context
+    } = this.createCanvas();
 
     this.canvas = canvas;
     this.context = context;
@@ -55,7 +63,7 @@ const viz = {
 
   resetAlpha() {
     const alpha = this.simulation.alpha();
-    const alphaRounded =  Math.round((1 - alpha) * 100);
+    const alphaRounded = Math.round((1 - alpha) * 100);
     if (alphaRounded === 100) {
       this.simulation.alpha(this.alphaStart);
       this.restartSimulation();
@@ -126,7 +134,10 @@ const viz = {
 
   getDimensions() {
     const element = document.body;
-    const { width, height } = element.getBoundingClientRect();
+    const {
+      width,
+      height
+    } = element.getBoundingClientRect();
 
     return {
       width,
@@ -174,8 +185,20 @@ const viz = {
       if (node.shadow) {
         this.drawShadow(x, y, radius);
       }
-
-      this.context.fillStyle = this.canvasColor;
+      //Eve is messing around here
+      if (node.hostname == 'www.nytimes.com') {
+        this.context.fillStyle = 'purple';
+      } else if (node.greenCheckTest == 1) {
+        this.context.fillStyle = 'lime'
+      } else if (node.greenCheckTest == 0) {
+        this.context.fillStyle = 'red'
+      }
+      // else if (node.firstParty) {
+      //   this.context.fillStyle = this.canvasColor;}
+      else {
+        this.context.fillStyle = this.canvasTestColor;
+      }
+      //end of eve messing around.
       this.context.closePath();
       this.context.fill();
 
@@ -282,7 +305,9 @@ const viz = {
 
   getTooltipPosition(x, y) {
     const tooltipArrowHeight = 20;
-    const { right: canvasRight } = this.canvas.getBoundingClientRect();
+    const {
+      right: canvasRight
+    } = this.canvas.getBoundingClientRect();
     const {
       height: tooltipHeight,
       width: tooltipWidth
@@ -306,7 +331,10 @@ const viz = {
     this.tooltip.innerText = title;
     this.tooltip.style.display = 'block';
 
-    const { left, top } = this.getTooltipPosition(x, y);
+    const {
+      left,
+      top
+    } = this.getTooltipPosition(x, y);
     this.tooltip.style['left'] = `${left}px`;
     this.tooltip.style['top'] = `${top}px`;
   },
@@ -349,7 +377,10 @@ const viz = {
   },
 
   getMousePosition(event) {
-    const { left, top } = this.canvas.getBoundingClientRect();
+    const {
+      left,
+      top
+    } = this.canvas.getBoundingClientRect();
 
     return {
       mouseX: event.clientX - left,
@@ -366,8 +397,11 @@ const viz = {
 
   addMouseMove() {
     this.canvas.addEventListener('mousemove', (event) => {
-      const { mouseX, mouseY } = this.getMousePosition(event);
-      const [ invertX, invertY ] = this.transform.invert([mouseX, mouseY]);
+      const {
+        mouseX,
+        mouseY
+      } = this.getMousePosition(event);
+      const [invertX, invertY] = this.transform.invert([mouseX, mouseY]);
       const node = this.getNodeAtCoordinates(invertX, invertY);
 
       if (node) {
@@ -391,7 +425,10 @@ const viz = {
     this.canvas.style.width = 0;
     this.canvas.style.height = 0;
 
-    const { width, height } = this.getDimensions('visualization');
+    const {
+      width,
+      height
+    } = this.getDimensions('visualization');
     this.updateCanvas(width, height);
     this.draw(this.nodes, this.links);
   },
