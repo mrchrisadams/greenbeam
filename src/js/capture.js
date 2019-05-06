@@ -9,6 +9,8 @@ const capture = {
   },
 
   addListeners() {
+    //  Eve added first the below!
+    const greenWebAPI = 'http://api.thegreenwebfoundation.org/greencheck/api.thegreenwebfoundation.org';
     // listen for each HTTP response
     this.queue = [];
     browser.webRequest.onResponseStarted.addListener((response) => {
@@ -16,8 +18,13 @@ const capture = {
         type: 'sendThirdParty',
         data: response
       };
-      this.queue.push(eventDetails);
-      this.processNextEvent();
+      //  Added by Eve Add an if statement here to stop the madness!!!
+      if (response.url === greenWebAPI || response.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
+        return;
+      } else {
+        this.queue.push(eventDetails);
+        this.processNextEvent();
+      }
     }, {
       urls: ['<all_urls>']
     });
@@ -32,8 +39,14 @@ const capture = {
             tab
           }
         };
-        this.queue.push(eventDetails);
-        this.processNextEvent();
+        console.log('tab.url ' + tab.url);
+        const greenWebAPI = 'http://api.thegreenwebfoundation.org/greencheck/api.thegreenwebfoundation.org';
+        if (tab.url === greenWebAPI || tab.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
+          return
+        } else {
+          this.queue.push(eventDetails);
+          this.processNextEvent();
+        }
       });
   },
 
@@ -91,6 +104,11 @@ const capture = {
       info.cookieStoreId !== defaultCookieStore) {
       return false;
     }
+    //  Eve adding this here to ignore calls to the API
+    if (documentUrl === 'api.thegreenwebfoundation.org') {
+      return false;
+    }
+    //  end of eve messing about
     if (this.isVisibleTab(tabId)) {
       const tab = await this.getTab(tabId);
       if (!tab) {
@@ -161,15 +179,13 @@ const capture = {
     } else {
       firstPartyUrl = new URL(response.originUrl);
     }
-    //Eve starts here!
-    // if (targetUrl.hostname != 'api.thegreenwebfoundation.org') {
-    const testVariable = await checkGreenStatus(targetUrl.hostname).then(data => {
+    //  Trying to stop all the loops of calls to the API!!
+    const greenStatus = await checkGreenStatus(targetUrl.hostname).then(data => {
       return data.green
     });
-
-    console.log(targetUrl.hostname);
-    console.log(testVariable);
-    //Eve mostly ends here!!
+    console.log('this is from sendThirdParty ' + targetUrl.hostname);
+    console.log(greenStatus);
+    //  Eve mostly ends here!!
     if (firstPartyUrl.hostname &&
       targetUrl.hostname !== firstPartyUrl.hostname &&
       targetUrl.hostname !== 'api.thegreenwebfoundation.org' &&
@@ -179,7 +195,7 @@ const capture = {
         origin: originUrl.hostname,
         requestTime: response.timeStamp,
         firstParty: false,
-        greenCheckTest: testVariable
+        greenCheck: greenStatus
       };
       await store.setThirdParty(
         firstPartyUrl.hostname,
@@ -192,20 +208,19 @@ const capture = {
   // capture first party requests
   async sendFirstParty(tabId, changeInfo, tab) {
     const documentUrl = new URL(tab.url);
-    //start of Eve messing around.
-    const testVariable = await checkGreenStatus(documentUrl.hostname).then(data => {
+    //  Added by Greenbeam. Here we are checking whether a given website is hosted by renewables.
+    //  This works for most first parties but confusing sometimes does not seem to work.
+    const greenStatus = await checkGreenStatus(documentUrl.hostname).then(data => {
       return data.green
     });
-    console.log("firstparty " + testVariable);
-    console.log(documentUrl.hostname);
-    //end of eve messing around!
+    //  End of the Greenbeam additions.
     if (documentUrl.hostname &&
       tab.status === 'complete' && await this.shouldStore(tab)) {
       const data = {
         faviconUrl: tab.favIconUrl,
         firstParty: true,
         requestTime: Date.now(),
-        greenCheckTest: testVariable
+        greenCheck: greenStatus
       };
       await store.setFirstParty(documentUrl.hostname, data);
     }
@@ -215,9 +230,13 @@ const capture = {
 
 //Eve is messing around below!! This should really be in a separate file!!!
 async function checkGreenStatus(url) {
-  let response = await fetch(`http://api.thegreenwebfoundation.org/greencheck/${url}`);
-  let data = await response.json()
-  return data
+  if (url === 'api.thegreenwebfoundation.org') {
+    return
+  } else {
+    const response = await fetch(`http://api.thegreenwebfoundation.org/greencheck/${url}`);
+    const data = await response.json()
+    return data
+  }
 }
 
 //End of eve messing around.

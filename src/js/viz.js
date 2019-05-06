@@ -8,7 +8,7 @@ const viz = {
   collisionRadius: 10,
   chargeStrength: -100,
   tickCount: 100,
-  //Eve is messing around below
+  //  Eve is messing around below
   canvasColor: 'white',
   canvasTestColor: 'white',
   alphaStart: 1,
@@ -185,20 +185,17 @@ const viz = {
       if (node.shadow) {
         this.drawShadow(x, y, radius);
       }
-      //Eve is messing around here
+      //  Eve is messing around here
       if (node.hostname == 'www.nytimes.com') {
         this.context.fillStyle = 'purple';
-      } else if (node.greenCheckTest == 1) {
+      } else if (node.greenCheck == 1) {
         this.context.fillStyle = 'lime'
-      } else if (node.greenCheckTest == 0) {
+      } else if (node.greenCheck == 0) {
         this.context.fillStyle = 'red'
-      }
-      // else if (node.firstParty) {
-      //   this.context.fillStyle = this.canvasColor;}
-      else {
+      } else {
         this.context.fillStyle = this.canvasTestColor;
       }
-      //end of eve messing around.
+      //  end of eve messing around.
       this.context.closePath();
       this.context.fill();
 

@@ -31,7 +31,7 @@ const store = {
     'lastRequestTime',
     'isVisible',
     'firstParty',
-    'greenCheckTest'
+    'greenCheck'
   ],
 
   makeNewDatabase() {
@@ -169,20 +169,15 @@ const store = {
   },
 
   outputWebsite(hostname, website) {
-    //note that once again eve is messing around here.
-    // let greenStatus = checkGreenStatus(hostname).then(data => {
-    //   return data.green
-    // });
-    //end of eve messing around!!
+    //  note that once again eve is messing around here.
     const output = {
       hostname: hostname,
       favicon: website.faviconUrl || '',
       firstPartyHostnames: website.firstPartyHostnames || false,
       firstParty: !!website.firstParty,
       thirdParties: [],
-      //Eve is of course messing around with the below variable!!
-      // greenCheck: greenStatus,
-      greenCheckTest: website.greenCheckTest
+      //  Eve is of course messing around with the below variable!!
+      greenCheck: website.greenCheck
     };
     if ('thirdPartyHostnames' in website) {
       output.thirdParties = website.thirdPartyHostnames;
@@ -269,11 +264,6 @@ const store = {
     if (!('hostname' in website)) {
       website['hostname'] = hostname;
     }
-    //Eve is messing around here!!
-    // console.log("test " + hostname);
-    // checkGreenStatus(hostname);
-    //end eve messing around.
-
     for (const key in data) {
       const value = data[key];
       switch (key) {
