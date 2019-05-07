@@ -20,6 +20,8 @@ const capture = {
       };
       //  Added by Eve Add an if statement here to stop the madness!!!
       if (response.url === greenWebAPI || response.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
+        console.log(eventDetails);
+        console.log("this is the response.url " + response.url)
         return;
       } else {
         this.queue.push(eventDetails);
@@ -42,7 +44,7 @@ const capture = {
         console.log('tab.url ' + tab.url);
         const greenWebAPI = 'http://api.thegreenwebfoundation.org/greencheck/api.thegreenwebfoundation.org';
         if (tab.url === greenWebAPI || tab.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
-          return
+          return;
         } else {
           this.queue.push(eventDetails);
           this.processNextEvent();
@@ -181,7 +183,7 @@ const capture = {
     }
     //  Trying to stop all the loops of calls to the API!!
     const greenStatus = await checkGreenStatus(targetUrl.hostname).then(data => {
-      return data.green
+      return data.green;
     });
     console.log('this is from sendThirdParty ' + targetUrl.hostname);
     console.log(greenStatus);
@@ -211,7 +213,7 @@ const capture = {
     //  Added by Greenbeam. Here we are checking whether a given website is hosted by renewables.
     //  This works for most first parties but confusing sometimes does not seem to work.
     const greenStatus = await checkGreenStatus(documentUrl.hostname).then(data => {
-      return data.green
+      return data.green;
     });
     //  End of the Greenbeam additions.
     if (documentUrl.hostname &&
@@ -231,11 +233,11 @@ const capture = {
 //Eve is messing around below!! This should really be in a separate file!!!
 async function checkGreenStatus(url) {
   if (url === 'api.thegreenwebfoundation.org') {
-    return
+    return;
   } else {
     const response = await fetch(`http://api.thegreenwebfoundation.org/greencheck/${url}`);
-    const data = await response.json()
-    return data
+    const data = await response.json();
+    return data;
   }
 }
 

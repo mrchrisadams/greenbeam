@@ -189,9 +189,9 @@ const viz = {
       if (node.hostname == 'www.nytimes.com') {
         this.context.fillStyle = 'purple';
       } else if (node.greenCheck == 1) {
-        this.context.fillStyle = 'lime'
+        this.context.fillStyle = 'lime';
       } else if (node.greenCheck == 0) {
-        this.context.fillStyle = 'red'
+        this.context.fillStyle = 'red';
       } else {
         this.context.fillStyle = this.canvasTestColor;
       }
