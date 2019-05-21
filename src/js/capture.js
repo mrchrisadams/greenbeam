@@ -18,14 +18,15 @@ const capture = {
         type: 'sendThirdParty',
         data: response
       };
+      //Things to filter out: 
       //  Added by Eve Add an if statement here to stop the madness!!!
-      if (response.url === greenWebAPI || response.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
-        console.log(eventDetails);
-        console.log("this is the response.url " + response.url)
+      // if (response.url === greenWebAPI || response.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
+      if (isBadUrl(response.url)) {
         return;
       } else {
         this.queue.push(eventDetails);
         this.processNextEvent();
+        console.log("response.url ", response.url)
       }
     }, {
       urls: ['<all_urls>']
@@ -43,10 +44,11 @@ const capture = {
         };
         console.log('tab.url ' + tab.url);
         const greenWebAPI = 'http://api.thegreenwebfoundation.org/greencheck/api.thegreenwebfoundation.org';
-        if (tab.url === greenWebAPI || tab.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
+        if (isBadUrl(tab.url)) {
           return;
         } else {
           this.queue.push(eventDetails);
+          console.log(tab + " logging from line 50")
           this.processNextEvent();
         }
       });
@@ -65,6 +67,8 @@ const capture = {
     if (this.queue.length >= 1) {
       try {
         const nextEvent = this.queue.shift();
+        console.log("nextEvent ", nextEvent)
+        console.log(this.queue.length)
         this.processingQueue = true;
         switch (nextEvent.type) {
           case 'sendFirstParty':
@@ -239,6 +243,11 @@ async function checkGreenStatus(url) {
     const data = await response.json();
     return data;
   }
+}
+
+function isBadUrl(url) {
+  const badURLS = ['http://127.0.0.1:5500/', 'http://api.thegreenwebfoundation.org/greencheck/', 'moz-extension://']
+  return badURLS.some(badURL => url.startsWith(badURL))
 }
 
 //End of eve messing around.

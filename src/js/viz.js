@@ -217,7 +217,7 @@ const viz = {
     };
   },
 
-  loadImage(URI) {
+  async loadImage(URI) {
     return new Promise((resolve, reject) => {
       if (!URI) {
         return reject();
@@ -229,6 +229,7 @@ const viz = {
         return resolve(image);
       };
       image.onerror = () => {
+        console.log('error!')
         return resolve(this.defaultIcon);
       };
       image.src = URI;
@@ -260,6 +261,10 @@ const viz = {
       tx = this.transform.applyX(x) - offset,
       ty = this.transform.applyY(y) - offset;
 
+    //Need to return if we don't have a favicon. 
+    if (!node.favicon) {
+      return;
+    }
     if (!node.image) {
       node.image = await this.loadImage(node.favicon);
     }
