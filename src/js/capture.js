@@ -9,8 +9,6 @@ const capture = {
   },
 
   addListeners() {
-    //  Eve added first the below!
-    const greenWebAPI = 'http://api.thegreenwebfoundation.org/greencheck/api.thegreenwebfoundation.org';
     // listen for each HTTP response
     this.queue = [];
     browser.webRequest.onResponseStarted.addListener((response) => {
@@ -18,15 +16,12 @@ const capture = {
         type: 'sendThirdParty',
         data: response
       };
-      //Things to filter out: 
-      //  Added by Eve Add an if statement here to stop the madness!!!
-      // if (response.url === greenWebAPI || response.url === 'http://api.thegreenwebfoundation.org/greencheck/') {
+      //  Greenbeam. Filtering out urls (eg, the API) to not trigger events.
       if (isBadUrl(response.url)) {
         return;
       } else {
         this.queue.push(eventDetails);
         this.processNextEvent();
-        console.log("response.url ", response.url)
       }
     }, {
       urls: ['<all_urls>']
@@ -42,13 +37,10 @@ const capture = {
             tab
           }
         };
-        console.log('tab.url ' + tab.url);
-        const greenWebAPI = 'http://api.thegreenwebfoundation.org/greencheck/api.thegreenwebfoundation.org';
         if (isBadUrl(tab.url)) {
           return;
         } else {
           this.queue.push(eventDetails);
-          console.log(tab + " logging from line 50")
           this.processNextEvent();
         }
       });
@@ -67,8 +59,6 @@ const capture = {
     if (this.queue.length >= 1) {
       try {
         const nextEvent = this.queue.shift();
-        console.log("nextEvent ", nextEvent)
-        console.log(this.queue.length)
         this.processingQueue = true;
         switch (nextEvent.type) {
           case 'sendFirstParty':
@@ -189,8 +179,6 @@ const capture = {
     const greenStatus = await checkGreenStatus(targetUrl.hostname).then(data => {
       return data.green;
     });
-    console.log('this is from sendThirdParty ' + targetUrl.hostname);
-    console.log(greenStatus);
     //  Eve mostly ends here!!
     if (firstPartyUrl.hostname &&
       targetUrl.hostname !== firstPartyUrl.hostname &&
@@ -214,8 +202,8 @@ const capture = {
   // capture first party requests
   async sendFirstParty(tabId, changeInfo, tab) {
     const documentUrl = new URL(tab.url);
-    //  Added by Greenbeam. Here we are checking whether a given website is hosted by renewables.
-    //  This works for most first parties but confusing sometimes does not seem to work.
+    // Greenbeam. Checking whether a given website is hosted by renewables.
+    // Note that for first parties it may take a wahile to load.
     const greenStatus = await checkGreenStatus(documentUrl.hostname).then(data => {
       return data.green;
     });
@@ -234,7 +222,7 @@ const capture = {
 };
 
 
-//Eve is messing around below!! This should really be in a separate file!!!
+// Greenbeam. The function to check the url against the API
 async function checkGreenStatus(url) {
   if (url === 'api.thegreenwebfoundation.org') {
     return;
@@ -246,8 +234,8 @@ async function checkGreenStatus(url) {
 }
 
 function isBadUrl(url) {
-  const badURLS = ['http://127.0.0.1:5500/', 'http://api.thegreenwebfoundation.org/greencheck/', 'moz-extension://']
-  return badURLS.some(badURL => url.startsWith(badURL))
+  const badURLS = ['http://127.0.0.1:5500/', 'http://api.thegreenwebfoundation.org/greencheck/', 'moz-extension://'];
+  return badURLS.some(badURL => url.startsWith(badURL));
 }
 
 //End of eve messing around.

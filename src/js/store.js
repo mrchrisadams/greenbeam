@@ -182,7 +182,6 @@ const store = {
     if ('thirdPartyHostnames' in website) {
       output.thirdParties = website.thirdPartyHostnames;
     }
-    console.log(output);
     return output;
   },
 

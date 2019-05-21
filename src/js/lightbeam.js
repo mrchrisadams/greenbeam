@@ -48,11 +48,7 @@ const lightbeam = {
     this.downloadData();
     this.resetData();
     storeChild.onUpdate((data) => {
-      try {
-        this.redraw(data);
-      } catch (e) {
-        console.log(e)
-      }
+      this.redraw(data);
     });
   },
 

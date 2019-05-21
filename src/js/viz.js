@@ -217,7 +217,7 @@ const viz = {
     };
   },
 
-  async loadImage(URI) {
+  loadImage(URI) {
     return new Promise((resolve, reject) => {
       if (!URI) {
         return reject();
@@ -229,7 +229,6 @@ const viz = {
         return resolve(image);
       };
       image.onerror = () => {
-        console.log('error!')
         return resolve(this.defaultIcon);
       };
       image.src = URI;
@@ -261,7 +260,7 @@ const viz = {
       tx = this.transform.applyX(x) - offset,
       ty = this.transform.applyY(y) - offset;
 
-    //Need to return if we don't have a favicon. 
+    // Greenbeam. Need to return if we don't have a favicon. 
     if (!node.favicon) {
       return;
     }
