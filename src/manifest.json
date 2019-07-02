@@ -1,14 +1,14 @@
 {
   "manifest_version": 2,
-  "name": "Firefox Lightbeam",
-  "version": "2.1.0",
+  "name": "GreenBeam",
+  "version": "0.1.0",
 
-  "description": "Firefox Lightbeam is a Firefox browser extension that uses interactive visualizations to show you the relationships between third parties and the sites you visit.",
-  "homepage_url": "https://github.com/mozilla/lightbeam-we",
+  "description": "Greenbeam is a browser extension, forked from Mozilla Lightbeam, that shines a light on the sustainable web",
+  "homepage_url": "https://the-greenbeam.glitch.me/",
 
   "icons": {
-    "48": "images/lightbeam-48.png",
-    "96": "images/lightbeam-96.png"
+    "48": "images/green-square.png",
+    "96": "images/green-square.png"
   },
 
   "permissions": [
@@ -22,8 +22,8 @@
   ],
 
   "browser_action": {
-    "default_icon": "images/lightbeam-48.png",
-    "default_title": "Firefox Lightbeam"
+    "default_icon": "images/green-square.png",
+    "default_title": "Greenbeam"
   },
 
   "applications": {
