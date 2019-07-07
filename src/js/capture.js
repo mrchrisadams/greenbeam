@@ -78,7 +78,7 @@ const capture = {
         }
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.warn('Exception found in queue process', e);
+        // console.warn('Exception found in queue process', e);
       }
       this.processNextEvent(true);
     } else {
@@ -179,6 +179,9 @@ const capture = {
     const greenStatus = await checkGreenStatus(targetUrl.hostname).then(data => {
       return data.green;
     });
+    // const greenStatus = await checkGreenStatus(targetUrl.hostname)
+    // const greenCheckData = greenStatus.data;
+
     //  Eve mostly ends here!!
     if (firstPartyUrl.hostname &&
       targetUrl.hostname !== firstPartyUrl.hostname &&
@@ -196,6 +199,7 @@ const capture = {
         targetUrl.hostname,
         data
       );
+
     }
   },
 
@@ -233,11 +237,10 @@ async function checkGreenStatus(url) {
   }
 }
 
+// Greenbeam. Here we are filtering out anything that starts with a "badURL."
 function isBadUrl(url) {
   const badURLS = ['http://127.0.0.1:5500/', 'http://api.thegreenwebfoundation.org/greencheck/', 'moz-extension://'];
   return badURLS.some(badURL => url.startsWith(badURL));
 }
-
-//End of eve messing around.
 
 capture.init();

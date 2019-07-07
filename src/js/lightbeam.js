@@ -3,6 +3,7 @@ const lightbeam = {
   dataGatheredSince: null,
   numFirstParties: 0,
   numThirdParties: 0,
+  numGreenSites: 0,
 
   async init() {
     this.websites = await storeChild.getAll();
@@ -70,6 +71,9 @@ const lightbeam = {
       dataGatheredSinceElement.textContent = this.dataGatheredSince || '';
       dataGatheredSinceElement.setAttribute('datetime', fullDateTime || '');
     }
+    if (this.numGreenSites === 0) {
+      this.numGreenSites = await this.getNumGreenSites();
+    }
     if (isFirstParty === undefined) {
       this.numFirstParties = await this.getNumFirstParties();
       this.setPartyVar('firstParty');
@@ -85,6 +89,7 @@ const lightbeam = {
     } else {
       this.numThirdParties++;
       this.setPartyVar('thirdParty');
+      this.numGreenSites = await this.getNumGreenSites();
     }
   },
 
@@ -92,9 +97,11 @@ const lightbeam = {
   setPartyVar(party) {
     const numFirstPartiesElement = document.getElementById('num-first-parties');
     const numThirdPartiesElement = document.getElementById('num-third-parties');
+    const numGreenSitesElement = document.getElementById('num-green-sites');
     if (party === 'firstParty') {
       if (this.numFirstParties === 0) {
         numFirstPartiesElement.textContent = '';
+        numGreenSitesElement.textContent = '';
       } else {
         numFirstPartiesElement.textContent = `${this.numFirstParties} Sites`;
       }
@@ -103,6 +110,9 @@ const lightbeam = {
     } else {
       const str = `${this.numThirdParties} Third Party Sites`;
       numThirdPartiesElement.textContent = str;
+      console.log(this.numFirstParties);
+      const greenPct = (this.numGreenSites / (this.numThirdParties + this.numFirstParties) * 100).toFixed(0);
+      numGreenSitesElement.textContent = `${greenPct}%`;
     }
   },
 
@@ -132,6 +142,10 @@ const lightbeam = {
 
   async getNumThirdParties() {
     return await storeChild.getNumThirdParties();
+  },
+
+  async getNumGreenSites() {
+    return await storeChild.getNumGreenSites();
   },
 
   // transforms the object of nested objects 'websites' into a

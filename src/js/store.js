@@ -150,7 +150,8 @@ const store = {
       'getFirstRequestTime',
       'getNumFirstParties',
       'getNumThirdParties',
-      'isFirstRun'
+      'isFirstRun',
+      'getNumGreenSites'
     ];
 
     if (publicMethods.includes(m['method'])) {
@@ -464,6 +465,10 @@ const store = {
 
   async getNumFirstParties() {
     return await this.db.websites.where('firstParty').equals(1).count();
+  },
+
+  async getNumGreenSites() {
+    return await this.db.websites.where('greenCheck').equals(1).count();
   },
 
   async getNumThirdParties() {

@@ -3,7 +3,7 @@
   "name": "GreenBeam",
   "version": "0.1.0",
 
-  "description": "Greenbeam is a browser extension, forked from Mozilla Lightbeam, that shines a light on the sustainable web",
+  "description": "Greenbeam is a browser extension, forked from Mozilla Lightbeam, that shines a light on privacy and the sustainable web",
   "homepage_url": "https://the-greenbeam.glitch.me/",
 
   "icons": {
