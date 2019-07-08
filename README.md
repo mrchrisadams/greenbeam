@@ -1,9 +1,10 @@
-# ~~Firefox Lightbeam~~ 
 # Greenbeam
 
-_This is an experiment in adapting an existing browser extension to see if it's possible to use tools like browser extensions to surface demand from end users of services, to have the sites and services they use run on renewable power_.
+_This is an experiment in adapting an existing browser extension to see if it's possible to use tools like browser extensions to surface demand from end users of services, to have the sites and services they use run on renewable power. Those of us who care about privacy and those of us who care about our climate, let's unite. In this space, we share aims._
 
-_See the [issues](https://github.com/eveahe/greenbeam/issues) for more_, and the [initial Prototype funding application in English](https://github.com/mrchrisadams/greenbeam/blob/master/docs/prototype-fund-application.md) to understand the idea in more detail
+![greenbeam-screenshot](/docs/images/greenbeam-screenshot.png)
+
+_See the [the greenbeam](https://the-greenbeam.glitch.me) for more info, and jump into the issues here on Github if you want to help out._
 
 Below are the original Lightbeam instructions on cloning, installing and running the extension.
 
@@ -12,8 +13,6 @@ Below are the original Lightbeam instructions on cloning, installing and running
 This is the web extension version of the Firefox Lightbeam add-on for visualizing HTTP requests between websites in real time.
 
 The Firefox Lightbeam extension by Mozilla is a key tool for Mozilla to educate the public about privacy.
-
-![lightbeam-screenshot](/docs/images/lightbeam.gif)
 
 ## Quick Start
 

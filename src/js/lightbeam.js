@@ -110,7 +110,6 @@ const lightbeam = {
     } else {
       const str = `${this.numThirdParties} Third Party Sites`;
       numThirdPartiesElement.textContent = str;
-      console.log(this.numFirstParties);
       const greenPct = (this.numGreenSites / (this.numThirdParties + this.numFirstParties) * 100).toFixed(0);
       numGreenSitesElement.textContent = `${greenPct}%`;
     }

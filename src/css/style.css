@@ -308,6 +308,11 @@ aside h2 {
   color: var(--primary-text-color);
 }
 
+p {
+  color: var(--button-border-color);
+  font-size: .75em;
+}
+
 .nav-links {
   margin-top: 20px;
   text-align: center;

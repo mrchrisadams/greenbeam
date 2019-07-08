@@ -186,12 +186,10 @@ const viz = {
         this.drawShadow(x, y, radius);
       }
       //  Eve is messing around here
-      if (node.hostname == 'www.nytimes.com') {
-        this.context.fillStyle = 'purple';
-      } else if (node.greenCheck == 1) {
-        this.context.fillStyle = 'lime';
+      if (node.greenCheck == 1) {
+        this.context.fillStyle = '#32CD32';
       } else if (node.greenCheck == 0) {
-        this.context.fillStyle = 'red';
+        this.context.fillStyle = '#909090';
       } else {
         this.context.fillStyle = this.canvasTestColor;
       }
@@ -260,7 +258,7 @@ const viz = {
       tx = this.transform.applyX(x) - offset,
       ty = this.transform.applyY(y) - offset;
 
-    // Greenbeam. Need to return if we don't have a favicon. 
+    // Greenbeam. Need to return if we don't have a favicon.
     if (!node.favicon) {
       return;
     }
