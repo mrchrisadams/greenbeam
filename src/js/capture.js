@@ -175,12 +175,9 @@ const capture = {
     } else {
       firstPartyUrl = new URL(response.originUrl);
     }
-    //  Trying to stop all the loops of calls to the API!!
-    const greenStatus = await checkGreenStatus(targetUrl.hostname).then(data => {
-      return data.green;
-    });
-    // const greenStatus = await checkGreenStatus(targetUrl.hostname)
-    // const greenCheckData = greenStatus.data;
+
+    const greenStatus = await checkGreenStatus(targetUrl.hostname);
+    const greenCheckData = greenStatus.green;
 
     //  Eve mostly ends here!!
     if (firstPartyUrl.hostname &&
@@ -192,7 +189,7 @@ const capture = {
         origin: originUrl.hostname,
         requestTime: response.timeStamp,
         firstParty: false,
-        greenCheck: greenStatus
+        greenCheck: greenCheckData
       };
       await store.setThirdParty(
         firstPartyUrl.hostname,
@@ -207,18 +204,16 @@ const capture = {
   async sendFirstParty(tabId, changeInfo, tab) {
     const documentUrl = new URL(tab.url);
     // Greenbeam. Checking whether a given website is hosted by renewables.
-    // Note that for first parties it may take a wahile to load.
-    const greenStatus = await checkGreenStatus(documentUrl.hostname).then(data => {
-      return data.green;
-    });
-    //  End of the Greenbeam additions.
+    // Note that for first parties it may take a while to load.
+    const greenStatus = await checkGreenStatus(documentUrl.hostname);
+    const greenCheckData = greenStatus.green;
     if (documentUrl.hostname &&
       tab.status === 'complete' && await this.shouldStore(tab)) {
       const data = {
         faviconUrl: tab.favIconUrl,
         firstParty: true,
         requestTime: Date.now(),
-        greenCheck: greenStatus
+        greenCheck: greenCheckData
       };
       await store.setFirstParty(documentUrl.hostname, data);
     }
