@@ -3,6 +3,7 @@ const lightbeam = {
   dataGatheredSince: null,
   numFirstParties: 0,
   numThirdParties: 0,
+  numGreenSites: 0,
 
   async init() {
     this.websites = await storeChild.getAll();
@@ -13,18 +14,15 @@ const lightbeam = {
   },
 
   async initTPToggle() {
-    const toggleCheckbox
-      = document.getElementById('tracking-protection-control');
+    const toggleCheckbox = document.getElementById('tracking-protection-control');
     const trackingProtection = document.getElementById('tracking-protection');
-    const trackingProtectionDisabled
-      = document.getElementById('tracking-protection-disabled');
+    const trackingProtectionDisabled = document.getElementById('tracking-protection-disabled');
     // Do we support setting TP
     if ('trackingProtectionMode' in browser.privacy.websites) {
       trackingProtection.hidden = false;
       trackingProtectionDisabled.hidden = true;
 
-      const trackingProtectionState
-        = await browser.privacy.websites.trackingProtectionMode.get({});
+      const trackingProtectionState = await browser.privacy.websites.trackingProtectionMode.get({});
       let value = true;
       if (trackingProtectionState.value !== 'always') {
         value = false;
@@ -32,7 +30,9 @@ const lightbeam = {
       toggleCheckbox.checked = value;
       toggleCheckbox.addEventListener('change', () => {
         const value = toggleCheckbox.checked ? 'always' : 'private_browsing';
-        browser.privacy.websites.trackingProtectionMode.set({ value });
+        browser.privacy.websites.trackingProtectionMode.set({
+          value
+        });
       });
     } else {
       trackingProtection.hidden = true;
@@ -59,15 +59,20 @@ const lightbeam = {
 
     // initialize dynamic vars from storage
     if (!this.dataGatheredSince) {
-      const { dateStr, fullDateTime } = await this.getDataGatheredSince();
+      const {
+        dateStr,
+        fullDateTime
+      } = await this.getDataGatheredSince();
       if (!dateStr) {
         return;
       }
       this.dataGatheredSince = dateStr;
-      const dataGatheredSinceElement
-        = document.getElementById('data-gathered-since');
+      const dataGatheredSinceElement = document.getElementById('data-gathered-since');
       dataGatheredSinceElement.textContent = this.dataGatheredSince || '';
       dataGatheredSinceElement.setAttribute('datetime', fullDateTime || '');
+    }
+    if (this.numGreenSites === 0) {
+      this.numGreenSites = await this.getNumGreenSites();
     }
     if (isFirstParty === undefined) {
       this.numFirstParties = await this.getNumFirstParties();
@@ -84,6 +89,7 @@ const lightbeam = {
     } else {
       this.numThirdParties++;
       this.setPartyVar('thirdParty');
+      this.numGreenSites = await this.getNumGreenSites();
     }
   },
 
@@ -91,9 +97,11 @@ const lightbeam = {
   setPartyVar(party) {
     const numFirstPartiesElement = document.getElementById('num-first-parties');
     const numThirdPartiesElement = document.getElementById('num-third-parties');
+    const numGreenSitesElement = document.getElementById('num-green-sites');
     if (party === 'firstParty') {
       if (this.numFirstParties === 0) {
         numFirstPartiesElement.textContent = '';
+        numGreenSitesElement.textContent = '';
       } else {
         numFirstPartiesElement.textContent = `${this.numFirstParties} Sites`;
       }
@@ -102,6 +110,9 @@ const lightbeam = {
     } else {
       const str = `${this.numThirdParties} Third Party Sites`;
       numThirdPartiesElement.textContent = str;
+      console.log(this.numFirstParties);
+      const greenPct = (this.numGreenSites / (this.numThirdParties + this.numFirstParties) * 100).toFixed(0);
+      numGreenSitesElement.textContent = `${greenPct}%`;
     }
   },
 
@@ -131,6 +142,10 @@ const lightbeam = {
 
   async getNumThirdParties() {
     return await storeChild.getNumThirdParties();
+  },
+
+  async getNumGreenSites() {
+    return await storeChild.getNumGreenSites();
   },
 
   // transforms the object of nested objects 'websites' into a
@@ -240,13 +255,14 @@ const lightbeam = {
     const saveData = document.getElementById('save-data-button');
     saveData.addEventListener('click', async () => {
       const data = await storeChild.getAll();
-      const blob = new Blob([JSON.stringify(data ,' ' , 2)],
-        {type : 'application/json'});
+      const blob = new Blob([JSON.stringify(data, ' ', 2)], {
+        type: 'application/json'
+      });
       const url = window.URL.createObjectURL(blob);
       const downloading = browser.downloads.download({
-        url : url,
-        filename : 'lightbeamData.json',
-        conflictAction : 'uniquify'
+        url: url,
+        filename: 'lightbeamData.json',
+        conflictAction: 'uniquify'
       });
       await downloading;
     });

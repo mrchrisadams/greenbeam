@@ -3,9 +3,11 @@
 
 _This is an experiment in adapting an existing browser extension to see if it's possible to use tools like browser extensions to surface demand from end users of services, to have the sites and services they use run on renewable power_.
 
-_See the [issues](https://github.com/mrchrisadams/greenbeam/issues) for more_, and the [initial Prototype funding application in English](https://github.com/mrchrisadams/greenbeam/blob/master/docs/prototype-fund-application.md) to understand the idea in more detail
+_See the [issues](https://github.com/eveahe/greenbeam/issues) for more_, and the [initial Prototype funding application in English](https://github.com/mrchrisadams/greenbeam/blob/master/docs/prototype-fund-application.md) to understand the idea in more detail
 
+Below are the original Lightbeam instructions on cloning, installing and running the extension.
 
+--- 
 
 This is the web extension version of the Firefox Lightbeam add-on for visualizing HTTP requests between websites in real time.
 

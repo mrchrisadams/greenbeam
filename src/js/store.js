@@ -14,12 +14,14 @@ const store = {
 
   async isFirstRun() {
     let isFirstRun = await browser.storage.local.get('isFirstRun');
-    if (! ('isFirstRun' in isFirstRun)) {
+    if (!('isFirstRun' in isFirstRun)) {
       isFirstRun = true;
     } else if (isFirstRun) {
       isFirstRun = false;
     }
-    await browser.storage.local.set({ isFirstRun });
+    await browser.storage.local.set({
+      isFirstRun
+    });
     return isFirstRun;
   },
 
@@ -28,13 +30,16 @@ const store = {
     'firstRequestTime',
     'lastRequestTime',
     'isVisible',
-    'firstParty'
+    'firstParty',
+    'greenCheck'
   ],
 
   makeNewDatabase() {
     this.db = new Dexie('websites_database');
     const websites = this.indexes.join(', ');
-    this.db.version(1).stores({websites});
+    this.db.version(1).stores({
+      websites
+    });
     this.db.open();
   },
 
@@ -50,8 +55,10 @@ const store = {
       // eslint-disable-next-line no-console
       console.error(`${error.message} ${explanation} ${this.ALLOWLIST_URL}`);
     }
-    const { firstPartyAllowList, thirdPartyAllowList }
-      = this.reformatList(allowList);
+    const {
+      firstPartyAllowList,
+      thirdPartyAllowList
+    } = this.reformatList(allowList);
     this.firstPartyAllowList = firstPartyAllowList;
     this.thirdPartyAllowList = thirdPartyAllowList;
   },
@@ -143,7 +150,8 @@ const store = {
       'getFirstRequestTime',
       'getNumFirstParties',
       'getNumThirdParties',
-      'isFirstRun'
+      'isFirstRun',
+      'getNumGreenSites'
     ];
 
     if (publicMethods.includes(m['method'])) {
@@ -162,12 +170,15 @@ const store = {
   },
 
   outputWebsite(hostname, website) {
+    //  note that once again eve is messing around here.
     const output = {
       hostname: hostname,
       favicon: website.faviconUrl || '',
       firstPartyHostnames: website.firstPartyHostnames || false,
       firstParty: !!website.firstParty,
-      thirdParties: []
+      thirdParties: [],
+      //  Eve is of course messing around with the below variable!!
+      greenCheck: website.greenCheck
     };
     if ('thirdPartyHostnames' in website) {
       output.thirdParties = website.thirdPartyHostnames;
@@ -181,8 +192,7 @@ const store = {
     }).toArray();
     const output = {};
     for (const website of websites) {
-      output[website.hostname]
-        = this.outputWebsite(website.hostname, website);
+      output[website.hostname] = this.outputWebsite(website.hostname, website);
     }
     return output;
   },
@@ -254,7 +264,6 @@ const store = {
     if (!('hostname' in website)) {
       website['hostname'] = hostname;
     }
-
     for (const key in data) {
       const value = data[key];
       switch (key) {
@@ -267,16 +276,16 @@ const store = {
           }
           break;
         case 'isVisible':
-          if ('isVisible' in website
-              && website.isVisible === true) {
+          if ('isVisible' in website &&
+            website.isVisible === true) {
             // once a website is visible, it will always be visible
             break;
           }
           website.isVisible = value;
           break;
         case 'firstParty':
-          if ('firstParty' in website
-              && website.firstParty === true) {
+          if ('firstParty' in website &&
+            website.firstParty === true) {
             // once a website is a first party, it will always be drawn as one
             break;
           }
@@ -320,15 +329,13 @@ const store = {
   // returns true if it is and false otherwise
   onAllowList(firstPartyFromRequest, thirdPartyFromRequest) {
     if (thirdPartyFromRequest && this.firstPartyAllowList) {
-      const hostnameVariantsFirstParty
-        = this.getHostnameVariants(firstPartyFromRequest);
+      const hostnameVariantsFirstParty = this.getHostnameVariants(firstPartyFromRequest);
       for (let i = 0; i < hostnameVariantsFirstParty.length; i++) {
         if (this.firstPartyAllowList
           .hasOwnProperty(hostnameVariantsFirstParty[i])) {
           // first party is in the allowlist
           const index = this.firstPartyAllowList[hostnameVariantsFirstParty[i]];
-          const hostnameVariantsThirdParty
-            = this.getHostnameVariants(thirdPartyFromRequest);
+          const hostnameVariantsThirdParty = this.getHostnameVariants(thirdPartyFromRequest);
           for (let j = 0; j < hostnameVariantsThirdParty.length; j++) {
             if (this.thirdPartyAllowList[index]
               .includes(hostnameVariantsThirdParty[j])) {
@@ -413,8 +420,8 @@ const store = {
   },
 
   isFirstPartyLinkedToThirdParty(firstParty, thirdPartyHostname) {
-    if (!('thirdPartyHostnames' in firstParty)
-      || !firstParty['thirdPartyHostnames'].includes(thirdPartyHostname)) {
+    if (!('thirdPartyHostnames' in firstParty) ||
+      !firstParty['thirdPartyHostnames'].includes(thirdPartyHostname)) {
       return false;
     }
     return true;
@@ -449,8 +456,7 @@ const store = {
   },
 
   async getFirstRequestTime() {
-    const oldestSite
-      = await this.db.websites.orderBy('firstRequestTime').first();
+    const oldestSite = await this.db.websites.orderBy('firstRequestTime').first();
     if (!oldestSite) {
       return false;
     }
@@ -459,6 +465,10 @@ const store = {
 
   async getNumFirstParties() {
     return await this.db.websites.where('firstParty').equals(1).count();
+  },
+
+  async getNumGreenSites() {
+    return await this.db.websites.where('greenCheck').equals(1).count();
   },
 
   async getNumThirdParties() {

@@ -1,7 +1,7 @@
 /*
-* Listens for HTTP request responses, sending first- and
-* third-party requests to storage.
-*/
+ * Listens for HTTP request responses, sending first- and
+ * third-party requests to storage.
+ */
 const capture = {
 
   init() {
@@ -16,10 +16,16 @@ const capture = {
         type: 'sendThirdParty',
         data: response
       };
-      this.queue.push(eventDetails);
-      this.processNextEvent();
-    },
-      {urls: ['<all_urls>']});
+      //  Greenbeam. Filtering out urls (eg, the API) to not trigger events.
+      if (isBadUrl(response.url)) {
+        return;
+      } else {
+        this.queue.push(eventDetails);
+        this.processNextEvent();
+      }
+    }, {
+      urls: ['<all_urls>']
+    });
     // listen for tab updates
     browser.tabs.onUpdated.addListener(
       (tabId, changeInfo, tab) => {
@@ -31,8 +37,12 @@ const capture = {
             tab
           }
         };
-        this.queue.push(eventDetails);
-        this.processNextEvent();
+        if (isBadUrl(tab.url)) {
+          return;
+        } else {
+          this.queue.push(eventDetails);
+          this.processNextEvent();
+        }
       });
   },
 
@@ -68,7 +78,7 @@ const capture = {
         }
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.warn('Exception found in queue process', e);
+        // console.warn('Exception found in queue process', e);
       }
       this.processNextEvent(true);
     } else {
@@ -86,10 +96,15 @@ const capture = {
     //  showing a simpler graph just for default means we won't confuse users
     //  into thinking isolation has broken
     const defaultCookieStore = 'firefox-default';
-    if ('cookieStoreId' in info
-        && info.cookieStoreId !== defaultCookieStore) {
+    if ('cookieStoreId' in info &&
+      info.cookieStoreId !== defaultCookieStore) {
       return false;
     }
+    //  Eve adding this here to ignore calls to the API
+    if (documentUrl === 'api.thegreenwebfoundation.org') {
+      return false;
+    }
+    //  end of eve messing about
     if (this.isVisibleTab(tabId)) {
       const tab = await this.getTab(tabId);
       if (!tab) {
@@ -115,9 +130,9 @@ const capture = {
 
     // ignore about:*, moz-extension:*
     // also ignore private browsing tabs
-    if (documentUrl.protocol !== 'about:'
-      && documentUrl.protocol !== 'moz-extension:'
-      && !privateBrowsing) {
+    if (documentUrl.protocol !== 'about:' &&
+      documentUrl.protocol !== 'moz-extension:' &&
+      !privateBrowsing) {
       return true;
     }
     return false;
@@ -161,36 +176,66 @@ const capture = {
       firstPartyUrl = new URL(response.originUrl);
     }
 
-    if (firstPartyUrl.hostname
-      && targetUrl.hostname !== firstPartyUrl.hostname
-      && await this.shouldStore(response)) {
+    const greenStatus = await checkGreenStatus(targetUrl.hostname);
+    const greenCheckData = greenStatus.green;
+
+    //  Eve mostly ends here!!
+    if (firstPartyUrl.hostname &&
+      targetUrl.hostname !== firstPartyUrl.hostname &&
+      targetUrl.hostname !== 'api.thegreenwebfoundation.org' &&
+      await this.shouldStore(response)) {
       const data = {
         target: targetUrl.hostname,
         origin: originUrl.hostname,
         requestTime: response.timeStamp,
-        firstParty: false
+        firstParty: false,
+        greenCheck: greenCheckData
       };
       await store.setThirdParty(
         firstPartyUrl.hostname,
         targetUrl.hostname,
         data
       );
+
     }
   },
 
   // capture first party requests
   async sendFirstParty(tabId, changeInfo, tab) {
     const documentUrl = new URL(tab.url);
-    if (documentUrl.hostname
-        && tab.status === 'complete' && await this.shouldStore(tab)) {
+    // Greenbeam. Checking whether a given website is hosted by renewables.
+    // Note that for first parties it may take a while to load.
+    const greenStatus = await checkGreenStatus(documentUrl.hostname);
+    const greenCheckData = greenStatus.green;
+    if (documentUrl.hostname &&
+      tab.status === 'complete' && await this.shouldStore(tab)) {
       const data = {
         faviconUrl: tab.favIconUrl,
         firstParty: true,
-        requestTime: Date.now()
+        requestTime: Date.now(),
+        greenCheck: greenCheckData
       };
       await store.setFirstParty(documentUrl.hostname, data);
     }
   }
 };
+
+
+// Greenbeam. The function to check the url against the API
+async function checkGreenStatus(url) {
+  if (url === 'api.thegreenwebfoundation.org') {
+    return;
+  } else {
+    const response = await fetch(`http://api.thegreenwebfoundation.org/greencheck/${url}`);
+    const data = await response.json();
+    return data;
+  }
+}
+
+// Greenbeam. Here we are filtering out anything that starts with a "badURL."
+function isBadUrl(url) {
+  const badURLS = ['http://127.0.0.1:5500/', 'http://api.thegreenwebfoundation.org/greencheck/', 'moz-extension://'];
+  return badURLS.some(badURL => url.startsWith(badURL));
+}
 
 capture.init();
