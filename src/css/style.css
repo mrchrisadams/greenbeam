@@ -310,13 +310,8 @@ aside h2 {
   color: var(--primary-text-color);
 }
 
-/* p {
-  color: var(--button-border-color);
-  font-size: .75em;
-} */
-
 .nav-links {
-  margin-top: 20px;
+  margin-top: 10px;
   text-align: center;
 }
 
@@ -348,9 +343,12 @@ aside h2 {
   padding-right: 5px;
   /* font-size: 0.75em; */
 }
+
 .actions-box ul {
   padding: 0rem 0rem 0.2rem 0.8rem;
+  margin-top: 10px;
 }
+
 .actions-box ul li {
   padding: 0rem 0rem 0.5rem 0.5rem;
   line-height: 1.2;
@@ -361,7 +359,8 @@ aside h2 {
 }
 
 .why-site::before {
-  background-image: url("../images/lightbeam_icon_help.png")
+  background-image: url("../images/lightbeam_icon_help.png");
+  margin-top: 10px;
 }
 
 .greenbeam-site::before {
