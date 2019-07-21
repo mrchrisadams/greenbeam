@@ -108,6 +108,8 @@ button:hover {
 }
 
 button::before,
+a.why-site::before,
+a.greenbeam-site::before,
 a.thumbs-up::before {
   content: "";
   display: inline-block;
@@ -308,10 +310,10 @@ aside h2 {
   color: var(--primary-text-color);
 }
 
-p {
+/* p {
   color: var(--button-border-color);
   font-size: .75em;
-}
+} */
 
 .nav-links {
   margin-top: 20px;
@@ -338,15 +340,33 @@ p {
   background-image: url("../images/lightbeam_icon_reset.png");
 }
 
+.actions-box {
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  border-width: 1px;
+  border-radius: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: .75em;
+}
+
 .thumbs-up::before {
   background-image: url("../images/lightbeam_icon_feedback.png");
+}
+
+.why-site::before {
+  background-image: url("../images/lightbeam_icon_help.png")
+}
+
+.greenbeam-site::before {
+  background-image: url("../images/lightbeam_icon_website.png")
 }
 
 /* ----------- UI - Top Bar ----------- */
 
 main {
   display: grid;
-  grid-template-rows: 10% 60% 30%;
+  grid-template-rows: 15% 60% 35%;
   background-color: var(--primary-color);
   height: 100%;
 }
