@@ -578,10 +578,6 @@ footer {
   justify-content: space-between;
 }
 
-.greenbeam-footer {
-  font-size: 14px;
-}
-
 .footer-heading h2 {
   padding-bottom: 5px;
   color: var(--primary-text-color);
