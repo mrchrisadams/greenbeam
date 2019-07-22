@@ -371,7 +371,7 @@ aside h2 {
 
 main {
   display: grid;
-  grid-template-rows: 15% 60% 35%;
+  grid-template-rows: 15% 75% 10%;
   background-color: var(--primary-color);
   height: 100%;
 }
@@ -554,6 +554,17 @@ main {
   background-image: url('../images/lightbeam_icon_about.png');
 }
 
+/* ---------- Credits ---------- */
+.credits {
+  z-index: 3;
+  color: var(--primary-text-color);
+  display: grid;
+  grid-template-columns: fit-content(50%);
+  font-size: 14px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
 /* ----------- UI - vis Controls ----------- */
 footer {
   display: grid;
@@ -565,6 +576,10 @@ footer {
   display: flex;
   border-bottom: 1px solid var(--primary-text-color);
   justify-content: space-between;
+}
+
+.greenbeam-footer {
+  font-size: 14px;
 }
 
 .footer-heading h2 {
