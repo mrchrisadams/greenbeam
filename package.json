@@ -4,7 +4,7 @@
   "description": "Firefox Lightbeam web extension",
   "main": "background.js",
   "scripts": {
-    "build": "npm install && npm run updatesubmodule && npm run createlib && cd src && web-ext build --overwrite-dest",
+    "build": "npm install && npm run updatesubmodule && npm run createlib && cd src && npx web-ext build --overwrite-dest",
     "updatesubmodule": "git submodule init && git submodule update",
     "createlib": "cd src && rm -rf ext-libs/ && mkdir ext-libs && npm run movelibcontents",
     "movelibcontents": "cp node_modules/dexie/dist/dexie.js src/ext-libs && cp node_modules/d3/build/d3.min.js src/ext-libs && cp node_modules/dialog-polyfill/dialog-polyfill.js src/ext-libs && node node_modules/json/lib/json.js -f shavar-prod-lists/disconnect-entitylist.json > src/ext-libs/disconnect-entitylist.json",
@@ -30,9 +30,12 @@
   "dependencies": {
     "d3": "^4.9.1",
     "dexie": "^2.0.1",
-    "dialog-polyfill": "^0.4.9"
+    "dexie-export-import": "^1.0.0-beta.13",
+    "dialog-polyfill": "^0.4.9",
+    "downloadjs": "^1.4.7"
   },
   "devDependencies": {
+    "web-ext": "^3.1.1",
     "chai": "^3.5.0",
     "eslint": "^3.19.0",
     "eslint-plugin-json": "^1.2.0",

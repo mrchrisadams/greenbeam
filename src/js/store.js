@@ -3,8 +3,10 @@ const store = {
   db: null,
 
   async init() {
+
     if (!this.db) {
       this.makeNewDatabase();
+      // this.makeFakeDatabase();
     }
     browser.runtime.onMessage.addListener((m) => {
       return store.messageHandler(m);
@@ -34,14 +36,56 @@ const store = {
     'greenCheck'
   ],
 
+  async adddummydata(hostname) {
+    const data = {
+      faviconUrl: "",
+      firstParty: true,
+      requestTime: Date.now(),
+      greenCheck: true
+    };
+    await this.setFirstParty(hostname, data);
+  },
+  async makeFakeDatabase() {
+    await this.makeNewDatabase();
+    const siteArr = Object.values(localWebsites)
+
+    const firstParties = siteArr.filter(site => {
+      return site.firstParty === true
+    })
+    firstParties.forEach(async (fp) => {
+      await this.setFirstParty(fp.hostname, fp);
+    })
+    const thirdParties = siteArr.filter(site => {
+      return site.firstParty === false
+    })
+    thirdParties.forEach(async (fp) => {
+      await this.setThirdParty(fp.firstPartyHostnames[0], fp.hostname, fp);
+    })
+    // add the new data
+    // const data = JSON.stringify('../lightbeamData.json')
+    // console.log(data)
+    // await this._write(website);
+  },
+
+
   makeNewDatabase() {
     this.db = new Dexie('websites_database');
     const websites = this.indexes.join(', ');
+    // https://dexie.org/docs/Dexie/Dexie.version()
     this.db.version(1).stores({
       websites
     });
     this.db.open();
   },
+
+  async exportDB() {
+    console.log("dumping", this.db)
+    console.log("dumping", { this.db.export })
+    const dump = await this.db.export()
+    console.log("dumped")
+    return dump
+  },
+
 
   // get Disconnect Entity List from shavar-prod-lists submodule
   async getAllowList() {
@@ -67,7 +111,7 @@ const store = {
   disconnect-entitylist.json is expected to match this format, where:
     - 'properties' keys are first parties
     - 'resources' keys are third parties
-
+  
   {
     "Facebook" : {
       "properties": [
@@ -83,12 +127,12 @@ const store = {
         "akamaihd.net"
       ]
     }
-
+  
     "Google" : {
       ...
     }
   }
-
+  
   this.firstPartyAllowList is expected to match this format:
   {
     "google.com": 1,
@@ -97,7 +141,7 @@ const store = {
     "facebook.com": 2,
     ...
   }
-
+  
   this.thirdPartyAllowList is expected to match this format:
   {
     1: [
@@ -106,7 +150,7 @@ const store = {
       "weloveevilstuff.com"
     ]
   }
-*/
+  */
 
   reformatList(allowList) {
     const firstPartyAllowList = {};
@@ -151,7 +195,8 @@ const store = {
       'getNumFirstParties',
       'getNumThirdParties',
       'isFirstRun',
-      'getNumGreenSites'
+      'getNumGreenSites',
+      'export'
     ];
 
     if (publicMethods.includes(m['method'])) {
@@ -163,6 +208,7 @@ const store = {
   },
 
   async _write(website) {
+    console.log(website)
     for (const key in website) {
       website[key] = this.mungeDataInbound(key, website[key]);
     }
@@ -189,7 +235,7 @@ const store = {
   async getAll() {
     const websites = await this.db.websites.filter((website) => {
       return website.isVisible || website.firstParty;
-    }).toArray();
+    }).limit(10).toArray();
     const output = {};
     for (const website of websites) {
       output[website.hostname] = this.outputWebsite(website.hostname, website);

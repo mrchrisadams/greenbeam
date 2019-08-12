@@ -1,11 +1,13 @@
 'use strict';
 
+console.log("WAAAAAAAAAAAT")
+
 async function checkFirstRun() {
-/*
-  if (await store.isFirstRun()) {
-    browser.tabs.create({ url: 'first-run.html' });
-  }
-  */
+  /*
+    if (await store.isFirstRun()) {
+      browser.tabs.create({ url: 'first-run.html' });
+    }
+    */
 }
 
 checkFirstRun();
@@ -27,8 +29,8 @@ async function runLightbeam() {
     // only open a new Lightbeam instance if one isn't already open.
     browser.tabs.create({ url: 'index.html' });
   } else if (!lightbeamTab.active) {
-     // re-focus Lightbeam if it is already open but lost focus
-    browser.tabs.update(lightbeamTab.id, {active: true});
+    // re-focus Lightbeam if it is already open but lost focus
+    browser.tabs.update(lightbeamTab.id, { active: true });
   }
 }
 

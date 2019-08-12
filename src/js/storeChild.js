@@ -27,6 +27,7 @@ const storeChildObject = {
   },
 
   parentMessage(method, ...args) {
+    console.log("parent Message", method, args)
     return browser.runtime.sendMessage({
       type: 'storeCall',
       method,
@@ -38,7 +39,7 @@ const storeChildObject = {
 const storeChild = new Proxy(storeChildObject, {
   get(target, prop) {
     if (target[prop] === undefined) {
-      return async function(...args)  {
+      return async function (...args) {
         return await this.parentMessage(prop, ...args);
       };
     } else {

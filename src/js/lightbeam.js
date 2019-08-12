@@ -4,6 +4,14 @@ const lightbeam = {
   numFirstParties: 0,
   numThirdParties: 0,
   numGreenSites: 0,
+  indexes: [
+    'hostname', // Primary key
+    'firstRequestTime',
+    'lastRequestTime',
+    'isVisible',
+    'firstParty',
+    'greenCheck'
+  ],
 
   async init() {
     this.websites = await storeChild.getAll();
@@ -253,17 +261,21 @@ const lightbeam = {
   downloadData() {
     const saveData = document.getElementById('save-data-button');
     saveData.addEventListener('click', async () => {
-      const data = await storeChild.getAll();
-      const blob = new Blob([JSON.stringify(data, ' ', 2)], {
-        type: 'application/json'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const downloading = browser.downloads.download({
-        url: url,
-        filename: 'lightbeamData.json',
-        conflictAction: 'uniquify'
-      });
-      await downloading;
+      // const data = await storeChild.getAll();
+      const blob = await storeChild.exportDB({ prettyJson: true });
+
+      // const blob = new Blob([JSON.stringify(data, ' ', 2)], {
+      //   type: 'application/json'
+      // });
+      console.log(blob)
+      // const url = window.URL.createObjectURL(blob);
+      // const downloading = browser.downloads.download({
+      //   url: url,
+      //   filename: 'lightbeamData.json',
+      //   conflictAction: 'uniquify'
+      // });
+      // await downloading;
+      download(blob, "lightbeamData.json", "application/json")
     });
   },
 
@@ -290,6 +302,18 @@ const lightbeam = {
       // triggered by the reset button. But it's better than nothing.
       resetData.focus();
     });
+  },
+  mungeDataInbound(key, value) {
+    if (this.indexes.includes(key)) {
+      // IndexedDB does not accept boolean values for indexes; using 0/1 instead
+      if (value === true) {
+        value = 1;
+      }
+      if (value === false) {
+        value = 0;
+      }
+    }
+    return value;
   },
 
   redraw(data) {
@@ -319,4 +343,31 @@ const lightbeam = {
 
 window.onload = () => {
   lightbeam.init();
+  // const sites = Object.values(localWebsites);
+  // let counter = 0
+
+  // // find the first parties
+  // const firstParties = Object.values(localWebsites).filter(site => {
+  //   return site.firstParty == true
+  // })
+
+  // firstParties.forEach(async (site) => {
+  //   if (counter < 10) {
+  //     console.log(site)
+  //     // and the third parties
+  //     const data = {
+  //       faviconUrl: "",
+  //       firstParty: true,
+  //       requestTime: Date.now(),
+  //       greenCheck: true
+  //     };
+  //     counter++
+  //     await storeChild.setFirstParty(site.hostname, data)
+  //   }
+
+  // })
+  // storeChild.getAll().then(data => {
+  //   console.log({ data })
+  //   lightbeam.websites = data
+  // })
 };
