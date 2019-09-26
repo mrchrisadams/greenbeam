@@ -8,7 +8,6 @@ const viz = {
   collisionRadius: 10,
   chargeStrength: -100,
   tickCount: 100,
-  //  Eve is messing around below
   canvasColor: 'white',
   canvasTestColor: 'white',
   alphaStart: 1,
@@ -187,9 +186,9 @@ const viz = {
       }
       //  Eve is messing around here
       if (node.greenCheck == 1) {
-        this.context.fillStyle = '#32CD32';
+        this.context.fillStyle = '#53CC12';
       } else if (node.greenCheck == 0) {
-        this.context.fillStyle = '#909090';
+        this.context.fillStyle = '#cbc6bf';
       } else {
         this.context.fillStyle = this.canvasTestColor;
       }

@@ -23,16 +23,17 @@
 
 :root {
   --primary-color: #000;
-  --secondary-color: #404850;
-  --tertiary-color: #eaeaea;
+  --secondary-color: #eaeaea;
+  --tertiary-color: #53CC12;
   --button-color: #171e25;
   --button-border-color: #12181b;
-  --button-active-color: limegreen;
+  --button-active-color: #53CC12;
   --button-active-border-color: palegreen;
   --primary-text-color: #eaeaea;
-  --secondary-text-color: limegreen;
-  --dialog-header-color: palegreen;
-  --dialog-button-color: palegreen;
+  --secondary-text-color: #eaeaea;
+  --tertiary-text-color: #12181b;
+  --dialog-header-color: #398C0D;
+  --dialog-button-color: #398C0D;
 }
 
 *::before,
@@ -259,7 +260,7 @@ dialog .dialog-options button:focus {
 }
 
 a {
-  color: var(--secondary-text-color);
+  color: var(--tertiary-text-color);
   font-size: .75em;
 }
 
@@ -291,14 +292,21 @@ a {
 }
 
 /* ----------- UI - Side Bar ----------- */
+.extension-title {
+  color: var(--tertiary-color);
+}
 
 aside {
-  background-color: var(--secondary-color);
   padding: 15px;
 }
 
 aside h1 {
   color: var(--tertiary-color);
+}
+
+aside p {
+  font-size: 0.75em;
+  margin-top: 0px;
 }
 
 .logo {
@@ -307,7 +315,7 @@ aside h1 {
 
 aside h2 {
   margin-top: 20px;
-  color: var(--primary-text-color);
+  color: var(--tertiary-text-color);
 }
 
 .nav-links {
@@ -336,12 +344,11 @@ aside h2 {
 }
 
 .actions-box {
-  color: var(--primary-text-color);
+  color: var(--tertiary-text-color);
   border-width: 1px;
   border-radius: 3px;
   padding-left: 5px;
   padding-right: 5px;
-  /* font-size: 0.75em; */
 }
 
 .actions-box ul {
@@ -350,9 +357,11 @@ aside h2 {
 }
 
 .actions-box ul li {
+  color: var(--tertiary-text-color);
   padding: 0rem 0rem 0.5rem 0.5rem;
   line-height: 1.2;
 }
+
 
 .thumbs-up::before {
   background-image: url("../images/lightbeam_icon_feedback.png");
@@ -370,8 +379,8 @@ aside h2 {
 /* ----------- UI - Top Bar ----------- */
 
 main {
-  display: grid;
-  grid-template-rows: 15% 75% 10%;
+  /* display: grid;
+  grid-template-rows: 15% 75% 10%; */
   background-color: var(--primary-color);
   height: 100%;
 }
@@ -381,7 +390,7 @@ main {
   justify-content: space-between;
   align-items: center;
   background-color: var(--tertiary-color);
-  padding: 20px;
+  padding: 15px;
 }
 
 .top-bar>dl {
