@@ -21,16 +21,15 @@
 <body>
   <aside class="max-graph">
     <header>
-      <h3 style="color:limegreen">GREENBEAM</h1>
-        <!-- <img class="logo" role="banner" src="images/lightbeam_150x45.png"> -->
+      <h3 class="extension-title">GREENBEAM</h3>
     </header>
     <nav role="navigation">
-      <h2>Visualization</h2>
-      <div class="toggle-menu">
+      <!-- <h2>Visualization</h2> -->
+      <!-- <div class="toggle-menu">
         <!-- @todo add click to toggle view between graph and list, highlighting active view -->
-        <button class="active graph">Graph</button>
-        <button class="list unimplemented">List</button>
-      </div>
+      <!-- <button class="active graph">Graph</button> -->
+      <!-- <button class="list unimplemented">List</button> -->
+      <!-- </div>  -->
       <h2>Data</h2>
       <div>
         <!-- @todo add click to save data -->
@@ -39,18 +38,25 @@
       </div>
       <h2>Take Action</h2>
       <div class="actions-box">
-        <p>1. Ask sites to switch to a web host running on renewables.</p>
-        <p>2. Switch your own web host. </p>
+        <ol>
+          <li><a href="https://www.thegreenwebfoundation.org/how-to-ask-a-site-to-switch-to-using-green-power/">Ask
+              sites to switch to a web host running on green power.</a></li>
+          <li><a href="https://www.thegreenwebfoundation.org/news/how-to-choose-a-good-green-host/">Switch your own web
+              host</a></li>
+        </ol>
       </div>
       <h2>Why + How</h2>
       <div>
-        <a class="why-site" href="https://planetfriendlyweb.org/why-it-matters/">IT + the Climate</a>
+        <a class="why-site" href="https://planetfriendlyweb.org/why-it-matters/" target="_blank">IT + the Climate</a>
         <a class="greenbeam-site" href="https://www.thegreenwebfoundation.org/" target="_blank">Data Source</a>
       </div>
       <h2>Contribute</h2>
-      <div class="nav-links">
+      <div>
         <!-- @todo confirm feedback URL -->
-        <a class="thumbs-up" href="https://github.com/eveahe/greenbeam/issues" target="_blank">Feedback welcome.</a>
+        <a class="thumbs-up" href="https://github.com/eveahe/greenbeam/issues" target="_blank">Feedback welcome</a>
+        <a class="lightbeam-site" href="https://addons.mozilla.org/en-US/firefox/addon/lightbeam/"
+          target="_blank">Firefox
+          Lightbeam</a>
       </div>
     </nav>
   </aside>
@@ -83,7 +89,7 @@
         </div>
       </dl>
       <!-- @todo add tracking protection and toggle functionality -->
-      <div class="tracking-protection" id="tracking-protection">
+      <!-- <div class="tracking-protection" id="tracking-protection">
         <label>Tracking Protection</label>
         <div class="toggle-switch">
           <label for="tracking-protection-control">
@@ -91,15 +97,15 @@
             <span class="toggle"></span>
           </label>
         </div>
-      </div>
-      <div class="tracking-protection" id="tracking-protection-disabled" hidden>
+      </div> -->
+      <!-- <div class="tracking-protection" id="tracking-protection-disabled" hidden>
         <label>Tracking Protection</label>
         <div
           title="Due to technical issues this doesn't work in current Firefox. Please visit Firefox preferences to enable instead.">
           Coming back in <a href="https://www.mozilla.org/en-US/firefox/quantum/">Firefox Quantum</a>
-        </div>
-      </div>
-      </div>
+        </div> -->
+      <!-- </div> -->
+      <!-- </div> -->
     </section>
     <section class="vis">
       <div class="vis-header max-graph">
@@ -122,9 +128,13 @@
         <div id="tooltip"></div>
       </div>
     </section>
+    <!-- <div class="credits">
+      <h2>Greenbeam is forked from Firefox Lightbeam and uses the GreenWebFoundation's data.
+        With thanks also to the Prototype Fund and ClimateActionTech!</h2>
+    </div> -->
     <footer class="unimplemented">
-      <div class="footer-toggle unimplemented">
-        <div class="footer-heading">
+      <div class="footer-toggle">
+        <div class="footer-heading unimplemented">
           <h2>Toggle Controls</h2>
         </div>
         <!-- @todo highlight active controls, add click to toggle controls -->
@@ -160,9 +170,9 @@
       <img class="dialog-icon" src="images/lightbeam_dialog_warningreset.png" alt="">
 
       <div class="dialog-content">
-        <p>Pressing OK will delete all Lightbeam information including connection history, user preferences, block sites
+        <p>Pressing OK will delete all Greenbeam information including connection history, user preferences, block sites
           list, etc.</p>
-        <p>Your browser will be returned to the state of a fresh install of Lightbeam.</p>
+        <p>Your browser will be returned to the state of a fresh install of Greenbeam.</p>
       </div>
 
       <menu class="dialog-options">

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "GreenBeam",
-  "version": "0.1.0",
+  "version": "0.2.0",
 
   "description": "Greenbeam is a browser extension, forked from Mozilla Lightbeam, that shines a light on privacy and the sustainable web",
   "homepage_url": "https://the-greenbeam.glitch.me/",
@@ -28,7 +28,7 @@
 
   "applications": {
     "gecko": {
-      "id": "jid1-F9UJ2thwoAm5gQ@jetpack",
+      // "id": "jid1-F9UJ2thwoAm5gQ@jetpack",
       "strict_min_version": "52.0"
     }
   },

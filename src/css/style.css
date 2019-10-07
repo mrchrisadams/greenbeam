@@ -23,16 +23,17 @@
 
 :root {
   --primary-color: #000;
-  --secondary-color: #404850;
-  --tertiary-color: #eaeaea;
+  --secondary-color: #eaeaea;
+  --tertiary-color: #53CC12;
   --button-color: #171e25;
   --button-border-color: #12181b;
-  --button-active-color: limegreen;
+  --button-active-color: #53CC12;
   --button-active-border-color: palegreen;
   --primary-text-color: #eaeaea;
-  --secondary-text-color: limegreen;
-  --dialog-header-color: palegreen;
-  --dialog-button-color: palegreen;
+  --secondary-text-color: #eaeaea;
+  --tertiary-text-color: #12181b;
+  --dialog-header-color: #398C0D;
+  --dialog-button-color: #398C0D;
 }
 
 *::before,
@@ -110,6 +111,7 @@ button:hover {
 button::before,
 a.why-site::before,
 a.greenbeam-site::before,
+a.lightbeam-site::before,
 a.thumbs-up::before {
   content: "";
   display: inline-block;
@@ -259,7 +261,7 @@ dialog .dialog-options button:focus {
 }
 
 a {
-  color: var(--secondary-text-color);
+  color: var(--tertiary-text-color);
   font-size: .75em;
 }
 
@@ -291,14 +293,21 @@ a {
 }
 
 /* ----------- UI - Side Bar ----------- */
+.extension-title {
+  color: var(--tertiary-color);
+}
 
 aside {
-  background-color: var(--secondary-color);
   padding: 15px;
 }
 
 aside h1 {
   color: var(--tertiary-color);
+}
+
+aside p {
+  font-size: 0.75em;
+  margin-top: 0px;
 }
 
 .logo {
@@ -307,16 +316,11 @@ aside h1 {
 
 aside h2 {
   margin-top: 20px;
-  color: var(--primary-text-color);
+  color: var(--tertiary-text-color);
 }
 
-/* p {
-  color: var(--button-border-color);
-  font-size: .75em;
-} */
-
 .nav-links {
-  margin-top: 20px;
+  margin-top: 10px;
   text-align: center;
 }
 
@@ -341,32 +345,47 @@ aside h2 {
 }
 
 .actions-box {
-  background-color: var(--primary-color);
-  color: var(--primary-text-color);
+  color: var(--tertiary-text-color);
   border-width: 1px;
   border-radius: 3px;
   padding-left: 5px;
   padding-right: 5px;
-  font-size: .75em;
 }
 
+.actions-box ol {
+  padding: 0rem 0rem 0.2rem 0.8rem;
+  margin-top: 10px;
+}
+
+.actions-box ol li {
+  color: var(--tertiary-text-color);
+  padding: 0rem 0rem 0.5rem 0.5rem;
+  line-height: 1.2;
+}
+
+
 .thumbs-up::before {
-  background-image: url("../images/lightbeam_icon_feedback.png");
+  background-image: url("../images/lightbeam_icon_feedback_dark_grey.png");
+}
+
+.lightbeam-site::before {
+  background-image: url("../images/lightbeam-48.png");
 }
 
 .why-site::before {
-  background-image: url("../images/lightbeam_icon_help.png")
+  background-image: url("../images/lightbeam_icon_help_dark_grey.png");
+  margin-top: 10px;
 }
 
 .greenbeam-site::before {
-  background-image: url("../images/lightbeam_icon_website.png")
+  background-image: url("../images/lightbeam_icon_website_dark_grey.png")
 }
 
 /* ----------- UI - Top Bar ----------- */
 
 main {
-  display: grid;
-  grid-template-rows: 15% 60% 35%;
+  /* display: grid;
+  grid-template-rows: 15% 75% 10%; */
   background-color: var(--primary-color);
   height: 100%;
 }
@@ -376,7 +395,7 @@ main {
   justify-content: space-between;
   align-items: center;
   background-color: var(--tertiary-color);
-  padding: 20px;
+  padding: 15px;
 }
 
 .top-bar>dl {
@@ -547,6 +566,17 @@ main {
 
 .about::before {
   background-image: url('../images/lightbeam_icon_about.png');
+}
+
+/* ---------- Credits ---------- */
+.credits {
+  z-index: 3;
+  color: var(--primary-text-color);
+  display: grid;
+  grid-template-columns: fit-content(50%);
+  font-size: 14px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 /* ----------- UI - vis Controls ----------- */
