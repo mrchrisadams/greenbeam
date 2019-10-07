@@ -111,6 +111,7 @@ button:hover {
 button::before,
 a.why-site::before,
 a.greenbeam-site::before,
+a.lightbeam-site::before,
 a.thumbs-up::before {
   content: "";
   display: inline-block;
@@ -351,12 +352,12 @@ aside h2 {
   padding-right: 5px;
 }
 
-.actions-box ul {
+.actions-box ol {
   padding: 0rem 0rem 0.2rem 0.8rem;
   margin-top: 10px;
 }
 
-.actions-box ul li {
+.actions-box ol li {
   color: var(--tertiary-text-color);
   padding: 0rem 0rem 0.5rem 0.5rem;
   line-height: 1.2;
@@ -364,16 +365,20 @@ aside h2 {
 
 
 .thumbs-up::before {
-  background-image: url("../images/lightbeam_icon_feedback.png");
+  background-image: url("../images/lightbeam_icon_feedback_dark_grey.png");
+}
+
+.lightbeam-site::before {
+  background-image: url("../images/lightbeam-48.png");
 }
 
 .why-site::before {
-  background-image: url("../images/lightbeam_icon_help.png");
+  background-image: url("../images/lightbeam_icon_help_dark_grey.png");
   margin-top: 10px;
 }
 
 .greenbeam-site::before {
-  background-image: url("../images/lightbeam_icon_website.png")
+  background-image: url("../images/lightbeam_icon_website_dark_grey.png")
 }
 
 /* ----------- UI - Top Bar ----------- */
