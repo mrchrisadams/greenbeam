@@ -2,6 +2,7 @@ const store = {
   ALLOWLIST_URL: '/ext-libs/disconnect-entitylist.json',
   db: null,
 
+  // set up the database, listend to writing to it, and fetch allowList
   async init() {
 
     if (!this.db) {
@@ -14,6 +15,7 @@ const store = {
     await this.getAllowList();
   },
 
+  // check if the add-on has been run before. set a flag for future reference
   async isFirstRun() {
     let isFirstRun = await browser.storage.local.get('isFirstRun');
     if (!('isFirstRun' in isFirstRun)) {
@@ -36,6 +38,7 @@ const store = {
     'greenCheck'
   ],
 
+  // fake add host as a first party
   async adddummydata(hostname) {
     const data = {
       faviconUrl: "",
@@ -45,6 +48,9 @@ const store = {
     };
     await this.setFirstParty(hostname, data);
   },
+
+  // set up fake db, fill with array of data from localWebsites,
+  // then set a bunch of first and third party sites
   async makeFakeDatabase() {
     await this.makeNewDatabase();
     const siteArr = Object.values(localWebsites)
@@ -67,7 +73,7 @@ const store = {
     // await this._write(website);
   },
 
-
+  // set up database using schema outlined with dexie
   makeNewDatabase() {
     this.db = new Dexie('websites_database');
     const websites = this.indexes.join(', ');
@@ -111,7 +117,7 @@ const store = {
   disconnect-entitylist.json is expected to match this format, where:
     - 'properties' keys are first parties
     - 'resources' keys are third parties
-  
+
   {
     "Facebook" : {
       "properties": [
@@ -151,7 +157,7 @@ const store = {
     ]
   }
   */
-
+  // make a list of first parties and third parties
   reformatList(allowList) {
     const firstPartyAllowList = {};
     const thirdPartyAllowList = {};
@@ -207,6 +213,7 @@ const store = {
     }
   },
 
+  // write website to websites table, after munging for Dexie's boolean handling
   async _write(website) {
     console.log(website)
     for (const key in website) {
@@ -215,6 +222,7 @@ const store = {
     return await this.db.websites.put(website);
   },
 
+  // create data object to fit website schema
   outputWebsite(hostname, website) {
     //  note that once again eve is messing around here.
     const output = {
@@ -232,6 +240,7 @@ const store = {
     return output;
   },
 
+  // fetch a limited subset of the websites
   async getAll() {
     const websites = await this.db.websites.filter((website) => {
       return website.isVisible || website.firstParty;
@@ -261,6 +270,7 @@ const store = {
       isVisible: false,
     }
   */
+  // fetch website from Dexie DB
   async getWebsite(hostname) {
     if (!hostname) {
       throw new Error('getWebsite requires a valid hostname argument');
@@ -278,6 +288,7 @@ const store = {
     }
   },
 
+  // adjust data for indexedDB
   mungeDataInbound(key, value) {
     if (this.indexes.includes(key)) {
       // IndexedDB does not accept boolean values for indexes; using 0/1 instead
@@ -290,7 +301,7 @@ const store = {
     }
     return value;
   },
-
+  // adjust data for indexedDB, but outbound
   mungeDataOutbound(key, value) {
     if (this.indexes.includes(key)) {
       // IndexedDB does not accept boolean values for indexes; using 0/1 instead
@@ -304,6 +315,7 @@ const store = {
     return value;
   },
 
+  // upsert detais about the website identified by hostname
   async setWebsite(hostname, data) {
     const website = await this.getWebsite(hostname);
 
@@ -395,6 +407,7 @@ const store = {
     return false;
   },
 
+  // set a hostname to be a first party domain, after
   async setFirstParty(hostname, data) {
     if (!hostname) {
       throw new Error('setFirstParty requires a valid hostname argument');
