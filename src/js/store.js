@@ -47,15 +47,24 @@ const store = {
   },
 
   async importDatabase(websites) {
+    console.log({ websites })
+    let counter = 0
+    const total = Object.entries(websites).length
+
     for (const site in websites) {
-      console.log({ site })
-      for (const site in websites) {
-        let siteInfo = websites[site]
-        console.log({ siteInfo })
-        let res = await this._write(siteInfo)
-        console.log({ res })
+      let siteInfo = websites[site]
+      // console.log({ siteInfo })
+      let res = await this._write(siteInfo)
+      counter++
+      if (counter % 100 == 0) {
+        console.log(`${counter} out of ${total} sites imported`)
       }
+
     }
+    console.log("imported all the sites - woop woop")
+    const importedSites = await this.getAll()
+    console.log(importedSites)
+    return importedSites
   },
 
   // get Disconnect Entity List from shavar-prod-lists submodule
@@ -178,21 +187,27 @@ const store = {
     }
   },
 
-  async importSiteData(url) {
+  async importSiteData(websites) {
+    console.log(`received call to import websites`)
+
+    console.log(`resetting db`)
+    const clearedDB = await this.reset()
     // check if the url is there
-    // console.log(`Received url to fetch: ${url}`)
+    // console.log(`Received url to fetch: ${ url }`)
     try {
       // fetch the url
-      const fetchedData = await fetch(url)
-      console.log({ fetchedData })
-      // try parsing it
-      const parsedSites = fetchedData.json()
-      console.log({ parsedSites })
+      // const fetchedData = await fetch(url)
+      // console.log({ fetchedData })
+      // // try parsing it
+      // const parsedSites = fetchedData.json()
+      // console.log({ parsedSites })
 
       // pass the datastructure to the store to import it
-      this.importDatabase(parsedSites)
+      console.log(`importing websites into db`, websites)
+      const importResult = await this.importDatabase(websites)
+      console.log({ importResult })
     } catch (error) {
-      console.log(error)
+      console.log({ error })
     }
 
   },

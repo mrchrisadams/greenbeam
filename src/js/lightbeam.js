@@ -6,6 +6,10 @@ const lightbeam = {
   numGreenSites: 0,
 
   async init() {
+
+
+
+    console.log('initialising the viz')
     this.websites = await storeChild.getAll();
     this.initTPToggle();
     this.renderGraph();
@@ -39,6 +43,7 @@ const lightbeam = {
       trackingProtectionDisabled.hidden = false;
     }
   },
+
 
   renderGraph() {
     const transformedData = this.transformData();
@@ -258,8 +263,10 @@ const lightbeam = {
     importDataButton.addEventListener('click', async () => {
       console.log("Attempting to import data")
       // prompt for a url to try fetching
-      let url = prompt("Where should we fetch the data from?")
+      // let url = prompt("Where should we fetch the data from?")
 
+      url = "moz-extension://0f5e2a52-66b8-0940-b06a-3617ed0fce68/ext-libs/lightbeamData.json"
+      // moz-extension://0f5e2a52-66b8-0940-b06a-3617ed0fce68/
       // sanity check the url
       const fetchedData = await fetch(url)
       console.log({ fetchedData })
@@ -269,7 +276,13 @@ const lightbeam = {
       console.log(`Parsed successfully. ${Object.entries(parsedSites).length} sites to import`)
 
       // delegate work to background thread
-      return await storeChild.importSiteData(parsedSites);
+      const dbCall = await storeChild.importSiteData(parsedSites);
+      console.log(`dbcall`, dbCall)
+      // nuke it all and start over
+      console.log(`re-rendering`)
+      window.location.reload();
+
+      return dbcall;
 
     })
   },
