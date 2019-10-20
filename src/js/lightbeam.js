@@ -249,6 +249,7 @@ const lightbeam = {
       }
       nodes.push(this.websites[website]);
     }
+    console.log({ nodes, links })
 
     return {
       nodes,
@@ -265,7 +266,7 @@ const lightbeam = {
       // prompt for a url to try fetching
       // let url = prompt("Where should we fetch the data from?")
 
-      url = "moz-extension://0f5e2a52-66b8-0940-b06a-3617ed0fce68/ext-libs/lightbeamData.json"
+      url = "ext-libs/lightbeamData.json"
       // moz-extension://0f5e2a52-66b8-0940-b06a-3617ed0fce68/
       // sanity check the url
       const fetchedData = await fetch(url)
@@ -280,9 +281,10 @@ const lightbeam = {
       console.log(`dbcall`, dbCall)
       // nuke it all and start over
       console.log(`re-rendering`)
+      this.init()
       window.location.reload();
 
-      return dbcall;
+      return dbCall;
 
     })
   },
