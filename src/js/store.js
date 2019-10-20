@@ -1,10 +1,12 @@
 const store = {
   ALLOWLIST_URL: '/ext-libs/disconnect-entitylist.json',
+  DB_IMPORT: '/ext-libs/lightbeamData.json',
   db: null,
 
   async init() {
     if (!this.db) {
       this.makeNewDatabase();
+      await this.importDatabase()
     }
     browser.runtime.onMessage.addListener((m) => {
       return store.messageHandler(m);
@@ -41,6 +43,23 @@ const store = {
       websites
     });
     this.db.open();
+  },
+
+  async importDatabase(websites) {
+    let dbdump;
+    dbdump = await fetch(this.DB_IMPORT);
+    dbdump = await dbdump.json();
+    console.log(dbdump)
+    for (const site in dbdump) {
+      console.log({ site })
+      let siteInfo = dbdump[site]
+      console.log({ siteInfo })
+      let res = await this._write(siteInfo)
+      console.log({ res })
+    }
+    const siteList = await this.getAll()
+    console.log({ siteList })
+
   },
 
   // get Disconnect Entity List from shavar-prod-lists submodule
