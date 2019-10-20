@@ -234,7 +234,7 @@ async function checkGreenStatus(url) {
 
 // Greenbeam. Here we are filtering out anything that starts with a "badURL."
 function isBadUrl(url) {
-  const badURLS = ['http://127.0.0.1:5500/', 'http://api.thegreenwebfoundation.org/greencheck/', 'moz-extension://'];
+  const badURLS = ['http://127.0.0.1:5500', 'http://api.thegreenwebfoundation.org/greencheck', 'moz-extension://'];
   return badURLS.some(badURL => url.startsWith(badURL));
 }
 
