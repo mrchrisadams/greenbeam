@@ -1,3 +1,4 @@
+var globalDB
 const store = {
   ALLOWLIST_URL: '/ext-libs/disconnect-entitylist.json',
   DB_IMPORT: '/ext-libs/lightbeamData.json',
@@ -6,6 +7,7 @@ const store = {
   async init() {
     if (!this.db) {
       this.makeNewDatabase();
+      console.log("importing database")
       await this.importDatabase()
     }
     browser.runtime.onMessage.addListener((m) => {
@@ -49,7 +51,9 @@ const store = {
     let dbdump;
     dbdump = await fetch(this.DB_IMPORT);
     dbdump = await dbdump.json();
-    console.log(dbdump)
+    globalDB = this.db
+    console.log({ dbump: dbdump })
+    console.log({ dbdump })
     for (const site in dbdump) {
       console.log({ site })
       let siteInfo = dbdump[site]
