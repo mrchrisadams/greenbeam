@@ -57,14 +57,17 @@ const store = {
       let res = await this._write(siteInfo)
       counter++
       if (counter % 100 == 0) {
+        console.log(siteInfo)
         console.log(`${counter} out of ${total} sites imported`)
       }
 
     }
     console.log("imported all the sites - woop woop")
     const importedSites = await this.getAll()
-    console.log(importedSites)
-    return importedSites
+    const importedAllSites = await this.getAllForImport()
+    console.log({ importedSites })
+    console.log({ importedAllSites })
+    return importedAllSites
   },
 
   // get Disconnect Entity List from shavar-prod-lists submodule
@@ -170,6 +173,7 @@ const store = {
 
     const publicMethods = [
       'getAll',
+      'getAllForImport',
       'reset',
       'getFirstRequestTime',
       'getNumFirstParties',
@@ -226,7 +230,8 @@ const store = {
       favicon: website.faviconUrl || '',
       firstPartyHostnames: website.firstPartyHostnames || false,
       firstParty: !!website.firstParty,
-      thirdParties: [],
+      isVisible: website.isVisible,
+      thirdParties: website.thirdParties || [],
       //  Eve is of course messing around with the below variable!!
       greenCheck: website.greenCheck
     };
@@ -240,6 +245,15 @@ const store = {
     const websites = await this.db.websites.filter((website) => {
       return website.isVisible || website.firstParty;
     }).toArray();
+    const output = {};
+    for (const website of websites) {
+      output[website.hostname] = this.outputWebsite(website.hostname, website);
+    }
+    return output;
+  },
+
+  async getAllForImport() {
+    const websites = await this.db.websites.toArray();
     const output = {};
     for (const website of websites) {
       output[website.hostname] = this.outputWebsite(website.hostname, website);
