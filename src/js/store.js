@@ -1,14 +1,13 @@
 var globalDB
 const store = {
   ALLOWLIST_URL: '/ext-libs/disconnect-entitylist.json',
-  DB_IMPORT: '/ext-libs/lightbeamData.json',
   db: null,
 
   async init() {
     if (!this.db) {
       this.makeNewDatabase();
       console.log("importing database")
-      await this.importDatabase()
+      // await this.importDatabase()
     }
     browser.runtime.onMessage.addListener((m) => {
       return store.messageHandler(m);
@@ -48,22 +47,15 @@ const store = {
   },
 
   async importDatabase(websites) {
-    let dbdump;
-    dbdump = await fetch(this.DB_IMPORT);
-    dbdump = await dbdump.json();
-    globalDB = this.db
-    console.log({ dbump: dbdump })
-    console.log({ dbdump })
-    for (const site in dbdump) {
+    for (const site in websites) {
       console.log({ site })
-      let siteInfo = dbdump[site]
-      console.log({ siteInfo })
-      let res = await this._write(siteInfo)
-      console.log({ res })
+      for (const site in websites) {
+        let siteInfo = websites[site]
+        console.log({ siteInfo })
+        let res = await this._write(siteInfo)
+        console.log({ res })
+      }
     }
-    const siteList = await this.getAll()
-    console.log({ siteList })
-
   },
 
   // get Disconnect Entity List from shavar-prod-lists submodule
@@ -90,7 +82,7 @@ const store = {
   disconnect-entitylist.json is expected to match this format, where:
     - 'properties' keys are first parties
     - 'resources' keys are third parties
-
+ 
   {
     "Facebook" : {
       "properties": [
@@ -106,12 +98,12 @@ const store = {
         "akamaihd.net"
       ]
     }
-
+ 
     "Google" : {
       ...
     }
   }
-
+ 
   this.firstPartyAllowList is expected to match this format:
   {
     "google.com": 1,
@@ -120,7 +112,7 @@ const store = {
     "facebook.com": 2,
     ...
   }
-
+ 
   this.thirdPartyAllowList is expected to match this format:
   {
     1: [
@@ -174,7 +166,8 @@ const store = {
       'getNumFirstParties',
       'getNumThirdParties',
       'isFirstRun',
-      'getNumGreenSites'
+      'getNumGreenSites',
+      'importSiteData',
     ];
 
     if (publicMethods.includes(m['method'])) {
@@ -183,6 +176,25 @@ const store = {
     } else {
       return new Error(`Unsupported method ${m.method}`);
     }
+  },
+
+  async importSiteData(url) {
+    // check if the url is there
+    // console.log(`Received url to fetch: ${url}`)
+    try {
+      // fetch the url
+      const fetchedData = await fetch(url)
+      console.log({ fetchedData })
+      // try parsing it
+      const parsedSites = fetchedData.json()
+      console.log({ parsedSites })
+
+      // pass the datastructure to the store to import it
+      this.importDatabase(parsedSites)
+    } catch (error) {
+      console.log(error)
+    }
+
   },
 
   async _write(website) {

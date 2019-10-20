@@ -46,6 +46,7 @@ const lightbeam = {
   },
 
   addListeners() {
+    this.importData()
     this.downloadData();
     this.resetData();
     storeChild.onUpdate((data) => {
@@ -248,6 +249,29 @@ const lightbeam = {
       nodes,
       links
     };
+  },
+
+  importData() {
+
+    const importDataButton = document.getElementById('import-data-button');
+    console.log(importDataButton)
+    importDataButton.addEventListener('click', async () => {
+      console.log("Attempting to import data")
+      // prompt for a url to try fetching
+      let url = prompt("Where should we fetch the data from?")
+
+      // sanity check the url
+      const fetchedData = await fetch(url)
+      console.log({ fetchedData })
+      // try parsing it
+      const parsedSites = await fetchedData.json()
+      console.log({ parsedSites })
+      console.log(`Parsed successfully. ${Object.entries(parsedSites).length} sites to import`)
+
+      // delegate work to background thread
+      return await storeChild.importSiteData(parsedSites);
+
+    })
   },
 
   downloadData() {
