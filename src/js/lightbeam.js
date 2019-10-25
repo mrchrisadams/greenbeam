@@ -264,9 +264,9 @@ const lightbeam = {
     importDataButton.addEventListener('click', async () => {
       console.log("Attempting to import data")
       // prompt for a url to try fetching
-      // let url = prompt("Where should we fetch the data from?")
+      let url = prompt("Where should we fetch the data from?")
 
-      url = "ext-libs/lightbeamData.json"
+      // url = "ext-libs/lightbeamData.json"
       // moz-extension://0f5e2a52-66b8-0940-b06a-3617ed0fce68/
       // sanity check the url
       const fetchedData = await fetch(url)
