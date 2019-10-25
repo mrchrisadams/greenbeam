@@ -51,7 +51,7 @@ const lightbeam = {
   },
 
   addListeners() {
-    this.importData()
+    // this.importData()
     this.downloadData();
     this.resetData();
     storeChild.onUpdate((data) => {
