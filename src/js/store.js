@@ -242,13 +242,76 @@ const store = {
   },
 
   async getAll() {
-    const websites = await this.db.websites.filter((website) => {
-      return website.isVisible || website.firstParty;
+    const NO_OF_FIRST_PARTY_SITES = 100
+
+    let siteSet = new Set()
+    let thirdPartySet = new Set()
+
+    // const websites = await this.db.websites.filter((website) => {
+    //   return website.firstParty;
+    // }).toArray();
+
+    // we need to fetch the first party sites
+    let websites = await this.db.websites
+      .filter(website => {
+        return !!website.firstParty
+      })
+      .reverse()
+      .sortBy("lastRequestTime")
+
+
+    // only show a maximum of 100 first party sites
+    // above this number, and graph is unusably slow
+    last100websites = websites.slice(0, (NO_OF_FIRST_PARTY_SITES - 1))
+
+    for (const website of last100websites) {
+      siteSet.add(website.hostname)
+      if (website["thirdPartyHostnames"]) {
+        for (const hostname of website["thirdPartyHostnames"]) {
+          thirdPartySet.add(hostname)
+        }
+      }
+    }
+
+    // make sure we don't link to any other sites in 1st or third party links
+
+    const thirdPartyWebsites = await this.db.websites.filter((website) => {
+      return thirdPartySet.has(website.hostname)
     }).toArray();
+
+    const combinedSet = new Set([...thirdPartySet].concat([...siteSet]))
+
+
+    for (const thirdPartySite of thirdPartyWebsites) {
+      let subset = thirdPartySite.firstPartyHostnames.filter(x => combinedSet.has(x))
+      thirdPartySite.firstPartyHostnames = subset
+      thirdPartySite.thirdPartyHostnames = subset
+    }
+
+    for (const firstPartySite of last100websites) {
+      if (firstPartySite["5firstPartyHostnames"]) {
+        let subset = firstPartySite.firstPartyHostnames.filter(x => combinedSet.has(x))
+        firstPartySite.firstPartyHostnames = subset
+        firstPartySite.thirdPartyHostnames = subset
+      }
+
+    }
+
+    // then we need to find the third party sites listed
+
+    // then for each of these third party sites, remove the first party sites in THEIR
+    // list, so we don't have them linking to sites not in the list
+
     const output = {};
-    for (const website of websites) {
+    for (const website
+      of last100websites) {
       output[website.hostname] = this.outputWebsite(website.hostname, website);
     }
+    for (const website of thirdPartyWebsites) {
+      output[website.hostname] = this.outputWebsite(website.hostname, website);
+    }
+
+    // debugger
     return output;
   },
 
