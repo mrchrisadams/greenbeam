@@ -243,15 +243,10 @@ const store = {
 
   async getAll() {
     const NO_OF_FIRST_PARTY_SITES = 100
-
+    const output = {};
     let siteSet = new Set()
-    let thirdPartySet = new Set()
 
-    // const websites = await this.db.websites.filter((website) => {
-    //   return website.firstParty;
-    // }).toArray();
-
-    // we need to fetch the first party sites
+    // we need to fetch the first party sites, sorted by last request time, to show the most relevant or recognisable sites possible
     let websites = await this.db.websites
       .filter(website => {
         return !!website.firstParty
@@ -261,48 +256,34 @@ const store = {
 
 
     // only show a maximum of 100 first party sites
-    // above this number, and graph is unusably slow
+    // above this number, and the graph is unusably slow
     last100websites = websites.slice(0, (NO_OF_FIRST_PARTY_SITES - 1))
 
+    // build our whitelist of hostnames we want to use in our query to fetch from
+    // the stored list of sites
     for (const website of last100websites) {
       siteSet.add(website.hostname)
       if (website["thirdPartyHostnames"]) {
         for (const hostname of website["thirdPartyHostnames"]) {
-          thirdPartySet.add(hostname)
+          siteSet.add(hostname)
         }
       }
     }
 
-    // make sure we don't link to any other sites in 1st or third party links
 
+    // make sure we don't link to any other sites in 1st or third party links
     const thirdPartyWebsites = await this.db.websites.filter((website) => {
-      return thirdPartySet.has(website.hostname)
+      return siteSet.has(website.hostname)
     }).toArray();
 
-    const combinedSet = new Set([...thirdPartySet].concat([...siteSet]))
-
-
-    for (const thirdPartySite of thirdPartyWebsites) {
-      let subset = thirdPartySite.firstPartyHostnames.filter(x => combinedSet.has(x))
-      thirdPartySite.firstPartyHostnames = subset
-      thirdPartySite.thirdPartyHostnames = subset
+    for (let site of thirdPartyWebsites) {
+      site = this.adjustFirstandThirdPartyHostnames(site, siteSet)
     }
 
-    for (const firstPartySite of last100websites) {
-      if (firstPartySite["5firstPartyHostnames"]) {
-        let subset = firstPartySite.firstPartyHostnames.filter(x => combinedSet.has(x))
-        firstPartySite.firstPartyHostnames = subset
-        firstPartySite.thirdPartyHostnames = subset
-      }
-
+    for (let site of last100websites) {
+      site = this.adjustFirstandThirdPartyHostnames(site, siteSet)
     }
 
-    // then we need to find the third party sites listed
-
-    // then for each of these third party sites, remove the first party sites in THEIR
-    // list, so we don't have them linking to sites not in the list
-
-    const output = {};
     for (const website
       of last100websites) {
       output[website.hostname] = this.outputWebsite(website.hostname, website);
@@ -311,8 +292,20 @@ const store = {
       output[website.hostname] = this.outputWebsite(website.hostname, website);
     }
 
-    // debugger
     return output;
+  },
+
+  // adjust the list of first and third party hostnames in site, to remove
+  // any hostnames not already in the siteSet Set. If you don't do this, our
+  // graph crashes, as D3 tries to link to nodes that are not there
+  adjustFirstandThirdPartyHostnames(site, siteSet) {
+
+    if (site["firstPartyHostnames"]) {
+      let subset = site.firstPartyHostnames.filter(x => siteSet.has(x))
+      site.firstPartyHostnames = subset
+      site.thirdPartyHostnames = subset
+    }
+    return site
   },
 
   async getAllForImport() {
